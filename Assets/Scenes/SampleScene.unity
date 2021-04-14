@@ -153,12 +153,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seed: 
-  DungeonGenerationZone: {x: 50, y: 50}
-  minMaxRoomWidth: {x: 8, y: 16}
-  minMaxRoomHeight: {x: 6, y: 12}
-  minMaxRoomAmount: {x: 20, y: 30}
+  DungeonGenerationZone: {x: 75, y: 75}
+  minMaxRoomWidth: {x: 12, y: 18}
+  minMaxRoomHeight: {x: 8, y: 16}
+  minMaxRoomAmount: {x: 10, y: 20}
   tileMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
   tileMeshMaterial: {fileID: 2100000, guid: f99ad574c0fb69b479f3c6725b1987c3, type: 2}
+  totalRooms: []
+  totalTiles: []
 --- !u!4 &555438654
 Transform:
   m_ObjectHideFlags: 0

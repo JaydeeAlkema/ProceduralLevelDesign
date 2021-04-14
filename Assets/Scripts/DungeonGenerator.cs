@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using NaughtyAttributes;
 using Random = UnityEngine.Random;
+using System;
 
 public class DungeonGenerator : MonoBehaviour
 {
@@ -15,6 +16,9 @@ public class DungeonGenerator : MonoBehaviour
 	[Foldout( "Dungeon Tiles Components" )] [SerializeField] private Mesh tileMesh;
 	[Foldout( "Dungeon Tiles Components" )] [SerializeField] private Material tileMeshMaterial;
 
+	[Foldout( "Dungeon Data" )] [SerializeField] private List<Room> totalRooms = new List<Room>();
+	[Foldout( "Dungeon Data" )] [SerializeField] private List<Tile> totalTiles = new List<Tile>();
+
 	private int roomCount = 0;
 
 	private void Awake()
@@ -26,13 +30,18 @@ public class DungeonGenerator : MonoBehaviour
 
 	private void Start()
 	{
-		GenerateRoomsWithincCircle();
+		var startTime = DateTime.Now;
+		Debug.Log( "Generating Dungeon..." );
+
+		GenerateRoomsWithincRegion();
+
+		Debug.Log( "Dungeon Generation Complete. It took: " + ( DateTime.Now - startTime ).Milliseconds + "ms" );
 	}
 
 	/// <summary>
 	/// Generates rooms withing a unit circle.
 	/// </summary>
-	private void GenerateRoomsWithincCircle()
+	private void GenerateRoomsWithincRegion()
 	{
 		int AmountOfRoomsToGenerate = Random.Range( minMaxRoomAmount.x, minMaxRoomAmount.y );
 
@@ -43,6 +52,8 @@ public class DungeonGenerator : MonoBehaviour
 
 			CreateRoom( new Vector2Int( ( int )coords.x, ( int )coords.y ), size );
 		}
+
+		CleanUp();
 	}
 
 	/// <summary>
@@ -72,6 +83,7 @@ public class DungeonGenerator : MonoBehaviour
 			}
 		}
 
+		totalRooms.Add( room );
 		roomCount++;
 	}
 
@@ -83,6 +95,16 @@ public class DungeonGenerator : MonoBehaviour
 	/// <param name="room"> Room Reference. </param>
 	private void CreateTile( Vector2Int coordinates, GameObject parentGO, Room room, string name )
 	{
+		// Dont create duplicate tiles.
+		for( int i = 0; i < totalTiles.Count; i++ )
+		{
+			if( totalTiles[i].Coordinates == coordinates )
+			{
+				//Debug.Log( "Duplicate Coordinates Found. No Tile will be created!" );
+				return;
+			}
+		}
+
 		GameObject TileGO = new GameObject();
 
 		MeshFilter meshFilter = TileGO.AddComponent<MeshFilter>();
@@ -99,7 +121,23 @@ public class DungeonGenerator : MonoBehaviour
 		TileGO.transform.position = new Vector3( coordinates.x, 0, coordinates.y );
 		TileGO.transform.parent = parentGO.transform;
 
+		totalTiles.Add( tile );
 		room.Tiles.Add( tile );
+	}
+
+	private void CleanUp()
+	{
+		// Remove empty rooms. These are created whenever 2 rooms are spawned on top of eachother. But not duplicate tiles can exist.
+		for( int r = 0; r < totalRooms.Count; r++ )
+		{
+			if( totalRooms[r].Tiles.Count == 0 )
+			{
+				Room roomToRemove = totalRooms[r];
+
+				totalRooms.Remove( roomToRemove );
+				Destroy( roomToRemove.gameObject );
+			}
+		}
 	}
 }
 
