@@ -7,7 +7,7 @@ using Random = UnityEngine.Random;
 public class DungeonGenerator : MonoBehaviour
 {
 	[Foldout( "Dungeon Parameters" )] [SerializeField] private string seed;
-	[Foldout( "Dungeon Parameters" )] [SerializeField] private int DungeonGenerationRadius;
+	[Foldout( "Dungeon Parameters" )] [SerializeField] private Vector2Int DungeonGenerationZone;
 	[Foldout( "Dungeon Parameters" )] [SerializeField] private Vector2Int minMaxRoomWidth;
 	[Foldout( "Dungeon Parameters" )] [SerializeField] private Vector2Int minMaxRoomHeight;
 	[Foldout( "Dungeon Parameters" )] [SerializeField] private Vector2Int minMaxRoomAmount;
@@ -38,7 +38,7 @@ public class DungeonGenerator : MonoBehaviour
 
 		for( int i = 0; i < AmountOfRoomsToGenerate; i++ )
 		{
-			Vector2 coords = Random.insideUnitCircle * DungeonGenerationRadius;
+			Vector2Int coords = new Vector2Int( Random.Range( -DungeonGenerationZone.x, DungeonGenerationZone.x ), Random.Range( -DungeonGenerationZone.y, DungeonGenerationZone.y ) );
 			Vector2Int size = new Vector2Int( Random.Range( minMaxRoomWidth.x, minMaxRoomWidth.y ), Random.Range( minMaxRoomHeight.x, minMaxRoomHeight.y ) );
 
 			CreateRoom( new Vector2Int( ( int )coords.x, ( int )coords.y ), size );
@@ -100,12 +100,6 @@ public class DungeonGenerator : MonoBehaviour
 		TileGO.transform.parent = parentGO.transform;
 
 		room.Tiles.Add( tile );
-	}
-
-	private void OnDrawGizmos()
-	{
-		Gizmos.color = Color.blue;
-		Gizmos.DrawWireSphere( transform.position, DungeonGenerationRadius );
 	}
 }
 
