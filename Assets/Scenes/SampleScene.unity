@@ -123,6 +123,53 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &201388189
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 201388191}
+  - component: {fileID: 201388190}
+  m_Layer: 0
+  m_Name: SegmentedDungeonGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &201388190
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 201388189}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fecb8fce0de17c4f8845ca606b0bb6b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  width: 10
+  height: 10
+  rows: 4
+  columns: 4
+--- !u!4 &201388191
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 201388189}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &555438652
 GameObject:
   m_ObjectHideFlags: 0
@@ -155,13 +202,13 @@ MonoBehaviour:
   seed: 
   roomParentTransform: {fileID: 1799345250}
   minRoomSize: {x: 3, y: 3}
-  maxRoomSize: {x: 5, y: 5}
+  maxRoomSize: {x: 6, y: 6}
   pathwayParentTransform: {fileID: 1410644579}
-  minPathwayCount: 5
-  maxPathwayCount: 10
-  minPathwayLength: 3
-  maxPathwayLength: 6
-  tileScale: 10
+  minPathwayCount: 25
+  maxPathwayCount: 35
+  minPathwayLength: 5
+  maxPathwayLength: 7
+  tileScale: 1
   tileGroundObjects:
   - {fileID: 1771317373563521373, guid: f5ffe3e08727642489dbff9dda5caa23, type: 3}
   tileWallObjects:
@@ -266,7 +313,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1327710796822245110, guid: 547dc517d0c4c05469ff797012c0192f, type: 3}
       propertyPath: orthographic size
-      value: 38.06
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 1327710796822245110, guid: 547dc517d0c4c05469ff797012c0192f, type: 3}
       propertyPath: m_BackGroundColor.b
