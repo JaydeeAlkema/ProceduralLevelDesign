@@ -149,18 +149,25 @@ MonoBehaviour:
   m_GameObject: {fileID: 555438652}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 49ed2520534dc1e4191d084209400fb8, type: 3}
+  m_Script: {fileID: 11500000, guid: b656551f1e0c6584f902eb8a4f2a2a41, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   seed: 
-  DungeonGenerationZone: {x: 75, y: 75}
-  minMaxRoomWidth: {x: 12, y: 18}
-  minMaxRoomHeight: {x: 8, y: 16}
-  minMaxRoomAmount: {x: 10, y: 20}
-  tileMesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
-  tileMeshMaterial: {fileID: 2100000, guid: f99ad574c0fb69b479f3c6725b1987c3, type: 2}
-  totalRooms: []
-  totalTiles: []
+  roomParentTransform: {fileID: 1799345250}
+  minRoomSize: {x: 3, y: 3}
+  maxRoomSize: {x: 5, y: 5}
+  pathwayParentTransform: {fileID: 1410644579}
+  minPathwayCount: 5
+  maxPathwayCount: 10
+  minPathwayLength: 3
+  maxPathwayLength: 6
+  tileScale: 10
+  tileGroundObjects:
+  - {fileID: 1771317373563521373, guid: f5ffe3e08727642489dbff9dda5caa23, type: 3}
+  tileWallObjects:
+  - {fileID: 4994870979389840053, guid: 69d7f5432a7ed504c8fc3218be7298aa, type: 3}
+  Rooms: []
+  tiles: []
 --- !u!4 &555438654
 Transform:
   m_ObjectHideFlags: 0
@@ -171,9 +178,71 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1799345250}
+  - {fileID: 1410644579}
   m_Father: {fileID: 0}
   m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1410644578
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1410644579}
+  m_Layer: 0
+  m_Name: Pathways
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1410644579
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1410644578}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 555438654}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1799345249
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1799345250}
+  m_Layer: 0
+  m_Name: Rooms
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1799345250
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1799345249}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 555438654}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!108 &2138677392 stripped
 Light:
