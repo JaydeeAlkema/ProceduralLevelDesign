@@ -11,21 +11,21 @@ public class DungenRoomFirst : MonoBehaviour
 	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] private bool randomizeSeed;
 	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] private string seed;
 	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] private Vector2Int dungeonSize = Vector2Int.zero;
-	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] [Range( 1, 30 )] private int amountOfRooms = 2;
+	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] private int amountOfRooms = 2;
 	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] private int amountOfTries = 1000;
 	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] private Vector2Int minRoomSize;
 	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] private Vector2Int maxRoomSize;
 	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] private int roomNeighbourRange;
 	[Space]
+	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] Transform roomsParent;
+	[Space]
 	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] List<GameObject> groundTileObjects;
 	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] List<GameObject> cornerTileObjects;
 	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] List<GameObject> wallTileObjects;
 	[Space]
-	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] Transform roomsParent;
-
 	[BoxGroup( "Dungeon Data" )] [SerializeField] private List<Room> roomsInDungeon = new List<Room>();
 	[BoxGroup( "Dungeon Data" )] [SerializeField] private List<Tile> tilesInDungeon = new List<Tile>();
-
+	[Space]
 	[BoxGroup( "Debug Data" )] [SerializeField] private bool showRoomNeighbourRange = false;
 	[BoxGroup( "Debug Data" )] [SerializeField] private bool showRoomNeighbour = false;
 
@@ -40,6 +40,7 @@ public class DungenRoomFirst : MonoBehaviour
 
 	public void Generate()
 	{
+		Debug.Log( "Starting Dungeon Generation!" );
 		startTime = DateTime.Now;
 
 		if( randomizeSeed ) seed = Random.Range( 0, int.MaxValue ).ToString();
@@ -196,6 +197,7 @@ public class DungenRoomFirst : MonoBehaviour
 		Gizmos.DrawWireCube( transform.position, new Vector3( dungeonSize.x, 1, dungeonSize.y ) );
 
 		if( roomsInDungeon.Count > 0 )
+		{
 			foreach( Room room in roomsInDungeon )
 			{
 				if( showRoomNeighbourRange )
@@ -213,6 +215,7 @@ public class DungenRoomFirst : MonoBehaviour
 					}
 				}
 			}
+		}
 	}
 }
 
