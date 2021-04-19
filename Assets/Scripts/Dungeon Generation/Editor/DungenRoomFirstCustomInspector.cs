@@ -4,26 +4,26 @@ using UnityEngine;
 using UnityEditor;
 using System.Reflection;
 
-[CustomEditor( typeof( DungenRoomFirst ) )]
-public class DungenRoomFirstCustomInspector : Editor
+public class DungenRoomFirstCustomInspector : MonoBehaviour
 {
-	public override void OnInspectorGUI()
+	private static DungenRoomFirst dungenRoomFirst;
+
+	[MenuItem( "Dungen/ Generate Dungeon" )]
+	private static void GenerateDungeon()
 	{
-		base.OnInspectorGUI();
+		ClearConsole();
 
-		DungenRoomFirst dungenRoomFirst = ( DungenRoomFirst )target;
+		dungenRoomFirst = FindObjectOfType<DungenRoomFirst>();
+		dungenRoomFirst.Generate();
+	}
 
-		if( GUILayout.Button( "Generate Dungeon" ) )
-		{
-			ClearConsole();
-			dungenRoomFirst.Generate();
-		}
+	[MenuItem( "Dungen/ Clear Dungeon" )]
+	private static void ClearDungeon()
+	{
+		ClearConsole();
 
-		if( GUILayout.Button( "Clear Dungeon" ) )
-		{
-			ClearConsole();
-			dungenRoomFirst.ClearDungeon();
-		}
+		dungenRoomFirst = FindObjectOfType<DungenRoomFirst>();
+		dungenRoomFirst.ClearDungeon();
 	}
 
 	public static void ClearConsole()
