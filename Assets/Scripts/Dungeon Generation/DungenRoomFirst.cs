@@ -1,6 +1,5 @@
 using NaughtyAttributes;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
@@ -55,15 +54,15 @@ public class DungenRoomFirst : MonoBehaviour
 			GenerateRoomLayoutData();
 		}
 
-		//for( int i = 0; i < roomsInDungeon.Count; i++ )
-		//{
-		//	Debug.Log( "Generating Room Objects!" );
-		//	GenerateRoomObjectsFromLayoutData( roomsInDungeon[i] );
-		//}
+		for( int i = 0; i < roomsInDungeon.Count; i++ )
+		{
+			Debug.Log( "Generating Room Objects!" );
+			GenerateRoomObjectsFromLayoutData( roomsInDungeon[i] );
+		}
 
 		foreach( Room room in roomsInDungeon )
 		{
-			Debug.Log( "Getting neighbours!" );
+			Debug.Log( "Getting Neighbour Rooms!" );
 			room.GetNeighbours( tilesInDungeon, roomNeighbourRange );
 		}
 
@@ -163,15 +162,14 @@ public class DungenRoomFirst : MonoBehaviour
 		{
 			for( int y = 0; y < roomSize.y; y++ )
 			{
-				int graphicIndex = Random.Range( 0, groundTileObjects.Count );
-
-				GameObject newTileGO = Instantiate( groundTileObjects[graphicIndex], newRoomGO.transform.parent );
+				GameObject newTileGO = new GameObject();
 				Tile tile = newTileGO.AddComponent<Tile>();
 
 				tile.Coordinates = new Vector2Int( roomStartCoordinates.x - ( roomSize.x / 2 ) + x, roomStartCoordinates.y - ( roomSize.y / 2 ) + y );
 				tile.ParentRoom = room;
 				tile.Type = TileType.GROUND;
 
+				newTileGO.name = tile.Name;
 				newTileGO.transform.position = new Vector3( tile.Coordinates.x, 0, tile.Coordinates.y );
 				newTileGO.transform.name = tile.name;
 				newTileGO.transform.parent = newRoomGO.transform;
@@ -188,7 +186,114 @@ public class DungenRoomFirst : MonoBehaviour
 
 	private void GenerateRoomObjectsFromLayoutData( Room room )
 	{
+		for( int t = 0; t < room.TilesInRoom.Count; t++ )
+		{
+			List<Tile> neighbourTiles = new List<Tile>();
+			Tile tile = room.TilesInRoom[t];
 
+			// Left, Right, Top and Bottom local Tiles.
+			Tile leftTile = null;
+			Tile rightTile = null;
+			Tile topTile = null;
+			Tile bottomTile = null;
+
+			// Get all the neighbour tiles.
+			for( int i = 0; i < room.TilesInRoom.Count; i++ )
+			{
+				// Get Left tile
+				if( room.TilesInRoom[i].Coordinates == new Vector2Int( tile.Coordinates.x - 1, tile.Coordinates.y ) )
+				{
+					leftTile = room.TilesInRoom[i];
+					neighbourTiles.Add( leftTile );
+				}
+
+				// Get Right tile
+				else if( room.TilesInRoom[i].Coordinates == new Vector2Int( tile.Coordinates.x + 1, tile.Coordinates.y ) )
+				{
+					rightTile = room.TilesInRoom[i];
+					neighbourTiles.Add( rightTile );
+				}
+
+				// Get Up tile
+				else if( room.TilesInRoom[i].Coordinates == new Vector2Int( tile.Coordinates.x, tile.Coordinates.y + 1 ) )
+				{
+					topTile = room.TilesInRoom[i];
+					neighbourTiles.Add( topTile );
+				}
+
+				// Get Down tile
+				else if( room.TilesInRoom[i].Coordinates == new Vector2Int( tile.Coordinates.x, tile.Coordinates.y - 1 ) )
+				{
+					bottomTile = room.TilesInRoom[i];
+					neighbourTiles.Add( bottomTile );
+				}
+			}
+
+			/// WALL CHECKS
+			// Check if this tile is all the way in the left of a room. a.k.a. no Left neighbour.
+			if( leftTile == null && rightTile != null && topTile != null && bottomTile != null )
+			{
+				Instantiate( wallTileObjects[Random.Range( 0, wallTileObjects.Count )], tile.transform.position, Quaternion.Euler( 0, 0, 0 ), tile.transform );
+				tile.Type = TileType.WALL;
+			}
+
+			// Check if this tile is all the way in the Right of a room. a.k.a. no Right neighbour.
+			else if( leftTile != null && rightTile == null && topTile != null && bottomTile != null )
+			{
+				Instantiate( wallTileObjects[Random.Range( 0, wallTileObjects.Count )], tile.transform.position, Quaternion.Euler( 0, 0, 0 ), tile.transform );
+				tile.Type = TileType.WALL;
+			}
+
+			// Check if this tile is all the way in the Top of a room. a.k.a. no top neighbour.
+			else if( leftTile != null && rightTile != null && topTile == null && bottomTile != null )
+			{
+				Instantiate( wallTileObjects[Random.Range( 0, wallTileObjects.Count )], tile.transform.position, Quaternion.Euler( 0, 0, 0 ), tile.transform );
+				tile.Type = TileType.WALL;
+			}
+
+			// Check if this tile is all the way in the Bottom of a room. a.k.a. no bottom neighbour.
+			else if( leftTile != null && rightTile != null && topTile != null && bottomTile == null )
+			{
+				Instantiate( wallTileObjects[Random.Range( 0, wallTileObjects.Count )], tile.transform.position, Quaternion.Euler( 0, 0, 0 ), tile.transform );
+				tile.Type = TileType.WALL;
+			}
+
+			/// CORNER CHECKS //
+			// Top Left Outer Corner.
+			else if( leftTile == null && rightTile != null && topTile == null && bottomTile != null )
+			{
+				Instantiate( cornerTileObjects[Random.Range( 0, cornerTileObjects.Count )], tile.transform.position, Quaternion.Euler( 0, 0, 0 ), tile.transform );
+				tile.Type = TileType.CORNER;
+			}
+
+			// Top Right Outer Corner.
+			else if( leftTile != null && rightTile == null && topTile == null && bottomTile != null )
+			{
+				Instantiate( cornerTileObjects[Random.Range( 0, cornerTileObjects.Count )], tile.transform.position, Quaternion.Euler( 0, 0, 0 ), tile.transform );
+				tile.Type = TileType.CORNER;
+			}
+
+			// Bottom Left Outer Corner.
+			else if( leftTile == null && rightTile != null && topTile != null && bottomTile == null )
+			{
+				Instantiate( cornerTileObjects[Random.Range( 0, cornerTileObjects.Count )], tile.transform.position, Quaternion.Euler( 0, 0, 0 ), tile.transform );
+				tile.Type = TileType.CORNER;
+			}
+
+			// Bottom Right Outer Corner.
+			else if( leftTile != null && rightTile == null && topTile != null && bottomTile == null )
+			{
+				Instantiate( cornerTileObjects[Random.Range( 0, cornerTileObjects.Count )], tile.transform.position, Quaternion.Euler( 0, 0, 0 ), tile.transform );
+				tile.Type = TileType.CORNER;
+			}
+
+			// All neighbours present, a.k.a. normal ground tile.
+			else if( leftTile != null && rightTile != null && topTile != null && bottomTile != null )
+			{
+				Instantiate( groundTileObjects[Random.Range( 0, groundTileObjects.Count )], tile.transform.position, Quaternion.Euler( 0, 0, 0 ), tile.transform );
+				tile.Type = TileType.GROUND;
+			}
+		}
 	}
 
 	private void OnDrawGizmos()
@@ -242,7 +347,7 @@ public enum RoomType
 [System.Serializable]
 public class Tile : MonoBehaviour
 {
-	[SerializeField] private new string name;
+	private new string name;
 	[SerializeField] private TileType type = TileType.GROUND;
 	[SerializeField] private Vector2Int coordinates = Vector2Int.zero;
 	[SerializeField] private Room parentRoom = default;
@@ -268,6 +373,7 @@ public class Room : MonoBehaviour
 	public int ID { get => iD; set => iD = value; }
 	public Vector2Int Coordinates { get => coordinates; set => coordinates = value; }
 	public Vector2Int Size { get => size; set => size = value; }
+	public List<Tile> TilesInRoom { get => tilesInRoom; set => tilesInRoom = value; }
 	public List<Room> NeighbouringRooms { get => neighbouringRooms; set => neighbouringRooms = value; }
 
 	/// <summary>
