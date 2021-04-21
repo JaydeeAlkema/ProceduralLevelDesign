@@ -14,7 +14,6 @@ public class DungenRoomFirst : MonoBehaviour
 	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] private int amountOfTries = 1000;
 	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] private Vector2Int minRoomSize;
 	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] private Vector2Int maxRoomSize;
-	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] private int roomNeighbourRange;
 	[Space]
 	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] Transform roomsParent;
 	[Space]
@@ -23,10 +22,13 @@ public class DungenRoomFirst : MonoBehaviour
 	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] List<GameObject> wallTileObjects;
 	[Space]
 	[BoxGroup( "Dungeon Data" )] [SerializeField] private List<Room> roomsInDungeon = new List<Room>();
-	[BoxGroup( "Dungeon Data" )] [SerializeField] private List<Tile> tilesInDungeon = new List<Tile>();
+	[BoxGroup( "Dungeon Data" )] [SerializeField] private List<Tile> pathwayTilesInDungeon = new List<Tile>();
+	[BoxGroup( "Dungeon Data" )] [SerializeField] private List<Tile> totalTilesInDungeon = new List<Tile>();
 	[Space]
 	[BoxGroup( "Debug Data" )] [SerializeField] private bool showRoomNeighbourRange = false;
 	[BoxGroup( "Debug Data" )] [SerializeField] private bool showRoomNeighbour = false;
+	[BoxGroup( "Debug Data" )] [SerializeField] private bool showRoomPathwayStartingpoints = false;
+	[BoxGroup( "Debug Data" )] [SerializeField] private bool showRoomPathwayEndpoints = false;
 
 	private DateTime startTime; // At which time we started generating the dungeon.
 	private int roomIndex = 0;
@@ -51,20 +53,25 @@ public class DungenRoomFirst : MonoBehaviour
 
 		while( totalTries < amountOfTries && roomsInDungeon.Count < amountOfRooms )
 		{
+			Debug.Log( "Generating Room Layout Data." );
 			GenerateRoomLayoutData();
-		}
-
-		for( int i = 0; i < roomsInDungeon.Count; i++ )
-		{
-			Debug.Log( "Generating Room Objects!" );
-			GenerateRoomObjectsFromLayoutData( roomsInDungeon[i] );
 		}
 
 		foreach( Room room in roomsInDungeon )
 		{
-			Debug.Log( "Getting Neighbour Rooms!" );
-			room.GetNeighbours( tilesInDungeon, roomNeighbourRange );
+			Debug.Log( "Generating Room Objects." );
+			GenerateRoomObjectsFromLayoutData( room );
+
+			Debug.Log( "Getting Neighbour Rooms." );
+			room.GetNeighbours( totalTilesInDungeon );
 		}
+
+		Debug.Log( "Clearing Dungeon of lone Rooms." );
+		CleanDungeon();
+
+		Debug.Log( "Generating Pathway Layout Data." );
+		GeneratePathwayLayoutData();
+
 
 		Debug.Log( "Dungeon Generation Took: " + ( DateTime.Now - startTime ).Milliseconds + "ms" );
 	}
@@ -72,11 +79,11 @@ public class DungenRoomFirst : MonoBehaviour
 	public void ClearDungeon()
 	{
 		// Destroy all Tiles in the Tiles in Dungeon List.
-		if( tilesInDungeon.Count > 0 )
+		if( totalTilesInDungeon.Count > 0 )
 		{
-			for( int t = 0; t < tilesInDungeon.Count; t++ )
+			for( int t = 0; t < totalTilesInDungeon.Count; t++ )
 			{
-				Tile tile = tilesInDungeon[t];
+				Tile tile = totalTilesInDungeon[t];
 
 				if( tile != null ) DestroyImmediate( tile.gameObject );
 			}
@@ -100,22 +107,55 @@ public class DungenRoomFirst : MonoBehaviour
 			DestroyImmediate( roomsParent.GetChild( i ).gameObject );
 		}
 
-		tilesInDungeon.Clear();
+		totalTilesInDungeon.Clear();
 		roomsInDungeon.Clear();
 		totalTries = 0;
 		roomIndex = 0;
+	}
+
+	private void CleanDungeon()
+	{
+		for( int r = 0; r < roomsInDungeon.Count; r++ )
+		{
+			Room room = roomsInDungeon[r];
+			if( room.NeighbouringRooms.Count == 0 )
+			{
+				for( int t = 0; t < room.TilesInRoom.Count; t++ )
+				{
+					totalTilesInDungeon.Remove( room.TilesInRoom[t] );
+				}
+
+				Debug.Log( "Deleting " + room.name );
+				DestroyImmediate( room.gameObject );
+			}
+		}
+
+		for( int r = 0; r < roomsInDungeon.Count; r++ )
+		{
+			Room room = roomsInDungeon[r];
+			for( int rn = 0; rn < room.NeighbouringRooms.Count; rn++ )
+			{
+				Room neighbour = room.NeighbouringRooms[rn];
+				if( neighbour == null )
+				{
+					room.NeighbouringRooms.Remove( neighbour );
+				}
+			}
+		}
+
+		for( int r = 0; r < roomsInDungeon.Count; r++ )
+		{
+			if( roomsInDungeon[r] == null )
+			{
+				roomsInDungeon.RemoveAt( r );
+			}
+		}
 	}
 
 	private void GenerateRoomLayoutData()
 	{
 		Vector2Int roomSize = new Vector2Int( Random.Range( minRoomSize.x, maxRoomSize.x ), Random.Range( minRoomSize.y, maxRoomSize.y ) );
 		Vector2Int roomStartCoordinates = new Vector2Int( Random.Range( -dungeonSize.x / 2 + roomSize.x / 2, dungeonSize.x / 2 - roomSize.x / 2 ), Random.Range( -dungeonSize.y / 2 + roomSize.y / 2, dungeonSize.y / 2 - roomSize.y / 2 ) );
-
-		// Force the width and height to be an Odd number
-		if( roomSize.x % 2 == 0 )
-			roomSize.x -= 1;
-		if( roomSize.y % 2 == 0 )
-			roomSize.y -= 1;
 
 		// Force the width and height to be an Odd number
 		if( roomSize.x % 2 == 0 )
@@ -144,10 +184,10 @@ public class DungenRoomFirst : MonoBehaviour
 				Room room2 = roomsInDungeon[r2];
 				if( room1 != room2 )
 				{
-					if( room1.Coordinates.x + room1.Size.x / 2 + 1 >= room2.Coordinates.x - room2.Size.x / 2 - 1 &&
-						room1.Coordinates.x - room1.Size.x / 2 - 1 <= room2.Coordinates.x + room2.Size.x / 2 + 1 &&
-						room1.Coordinates.y + room1.Size.y / 2 + 1 >= room2.Coordinates.y - room2.Size.y / 2 - 1 &&
-						room1.Coordinates.y - room1.Size.y / 2 - 1 <= room2.Coordinates.y + room2.Size.y / 2 + 1 )
+					if( room1.Coordinates.x + room1.Size.x / 2 + 2 >= room2.Coordinates.x - room2.Size.x / 2 - 1 &&
+						room1.Coordinates.x - room1.Size.x / 2 - 2 <= room2.Coordinates.x + room2.Size.x / 2 + 1 &&
+						room1.Coordinates.y + room1.Size.y / 2 + 2 >= room2.Coordinates.y - room2.Size.y / 2 - 1 &&
+						room1.Coordinates.y - room1.Size.y / 2 - 2 <= room2.Coordinates.y + room2.Size.y / 2 + 1 )
 					{
 						DestroyImmediate( newRoomGO );
 						totalTries++;
@@ -176,12 +216,77 @@ public class DungenRoomFirst : MonoBehaviour
 
 				room.AddTile( tile );
 
-				tilesInDungeon.Add( tile );
+				totalTilesInDungeon.Add( tile );
 			}
 		}
 
 		roomIndex++;
 		roomsInDungeon.Add( room );
+	}
+
+	private void GeneratePathwayLayoutData()
+	{
+		for( int r = 0; r < roomsInDungeon.Count; r++ )
+		{
+			for( int rn = 0; rn < roomsInDungeon[r].NeighbouringRooms.Count; rn++ )
+			{
+				Room originRoom = roomsInDungeon[r];
+				Room neighbourRoom = originRoom.NeighbouringRooms[rn];
+
+				Vector2Int startingPos = originRoom.Coordinates;
+				Vector2Int destinationPos = neighbourRoom.Coordinates;
+
+				int originRoomsizeX = originRoom.Size.x / 2;
+				int neighbourRoomsizeX = neighbourRoom.Size.x / 2;
+				int originRoomPosX = ( int )originRoom.transform.position.x;
+				int neighbourRoomPosX = ( int )neighbourRoom.transform.position.x;
+
+				int originRoomsizeY = originRoom.Size.y / 2;
+				int neighbourRoomsizeY = neighbourRoom.Size.y / 2;
+				int originRoomPosZ = ( int )originRoom.transform.position.z;
+				int neighbourRoomPosZ = ( int )neighbourRoom.transform.position.z;
+
+				// Get starting direction \\
+
+				// Neighbour Room to the RIGHT of Origin Room.
+				if( neighbourRoomPosX - neighbourRoomsizeX > originRoomPosX + originRoomsizeX )
+				{
+					startingPos.x = originRoomPosX + originRoomsizeX + 1;
+					startingPos.y = originRoom.Coordinates.y;
+					destinationPos.x = neighbourRoomPosX - neighbourRoomsizeX - 1;
+					destinationPos.y = neighbourRoom.Coordinates.y;
+				}
+				// Neighbour Room to the LEFT of Origin Room.
+				if( neighbourRoomPosX + neighbourRoomsizeX < originRoomPosX - originRoomsizeX )
+				{
+					startingPos.x = originRoomPosX - originRoomsizeX - 1;
+					startingPos.y = originRoom.Coordinates.y;
+					destinationPos.x = neighbourRoomPosX + neighbourRoomsizeX + 1;
+					destinationPos.y = neighbourRoom.Coordinates.y;
+				}
+
+				// Neighbour Room ABOVE of Origin Room.
+				if( neighbourRoomPosZ - neighbourRoomsizeY > originRoomPosZ + originRoomsizeY )
+				{
+					startingPos.x = originRoom.Coordinates.x;
+					startingPos.y = originRoomPosZ + originRoomsizeY + 1;
+					destinationPos.x = neighbourRoom.Coordinates.x;
+					destinationPos.y = neighbourRoomPosZ - neighbourRoomsizeY - 1;
+				}
+				// Neighbour Room UNDERNEATH of Origin Room.
+				if( neighbourRoomPosZ + neighbourRoomsizeY < originRoomPosZ - originRoomsizeY )
+				{
+					startingPos.x = originRoom.Coordinates.x;
+					startingPos.y = originRoomPosZ - originRoomsizeY - 1;
+					destinationPos.x = neighbourRoom.Coordinates.x;
+					destinationPos.y = neighbourRoomPosZ + neighbourRoomsizeY + 1;
+				}
+
+				originRoom.PathwayStartingPoints.Add( startingPos );
+				originRoom.PathwayEndPoints.Add( destinationPos );
+				//Debug.Log( string.Format( "{0} startingPos {1}, destinationPos {2}", originRoom.name, startingPos, destinationPos ) );
+			}
+		}
 	}
 
 	private void GenerateRoomObjectsFromLayoutData( Room room )
@@ -303,21 +408,65 @@ public class DungenRoomFirst : MonoBehaviour
 
 		if( roomsInDungeon.Count > 0 )
 		{
+			ShowRoomNeighbourRange();
+
+			ShowRoomNeighbour();
+
+			ShowRoomPathwayStartingPoints();
+
+			ShowRoomPathwayEndPoints();
+		}
+	}
+
+	private void ShowRoomNeighbourRange()
+	{
+		if( showRoomNeighbourRange )
+		{
 			foreach( Room room in roomsInDungeon )
 			{
-				if( showRoomNeighbourRange )
+				Handles.color = Color.cyan;
+				Handles.DrawWireDisc( room.transform.position, Vector3.up, room.NeighbourDetectionRange );
+			}
+		}
+	}
+	private void ShowRoomNeighbour()
+	{
+		if( showRoomNeighbour )
+		{
+			foreach( Room room in roomsInDungeon )
+			{
+				Gizmos.color = Color.green;
+				foreach( Room neighbour in room.NeighbouringRooms )
 				{
-					Handles.color = Color.cyan;
-					Handles.DrawWireDisc( room.transform.position, Vector3.up, roomNeighbourRange );
+					Gizmos.DrawLine( room.transform.position, neighbour.transform.position );
 				}
-
-				if( showRoomNeighbour )
+			}
+		}
+	}
+	private void ShowRoomPathwayStartingPoints()
+	{
+		if( showRoomPathwayStartingpoints )
+		{
+			foreach( Room room in roomsInDungeon )
+			{
+				for( int ps = 0; ps < room.PathwayStartingPoints.Count; ps++ )
 				{
-					Gizmos.color = Color.green;
-					foreach( Room neighbour in room.NeighbouringRooms )
-					{
-						Gizmos.DrawLine( room.transform.position, neighbour.transform.position );
-					}
+					Gizmos.color = Color.blue;
+					Gizmos.DrawSphere( new Vector3( room.PathwayStartingPoints[ps].x, 1, room.PathwayStartingPoints[ps].y ), 0.2f );
+				}
+			}
+		}
+	}
+	private void ShowRoomPathwayEndPoints()
+	{
+		if( showRoomPathwayEndpoints )
+		{
+			foreach( Room room in roomsInDungeon )
+			{
+				for( int pe = 0; pe < room.PathwayEndPoints.Count; pe++ )
+				{
+					Gizmos.color = Color.red;
+					Gizmos.DrawSphere( new Vector3( room.PathwayEndPoints[pe].x, 1, room.PathwayEndPoints[pe].y ), 0.2f );
 				}
 			}
 		}
@@ -366,8 +515,11 @@ public class Room : MonoBehaviour
 	[SerializeField] private RoomType type = RoomType.HUB;
 	[SerializeField] private Vector2Int coordinates = Vector2Int.zero;
 	[SerializeField] private Vector2Int size = Vector2Int.zero;
+	[SerializeField] private int neighbourDetectionRange = 6;
 	[SerializeField] private List<Tile> tilesInRoom = new List<Tile>();
 	[SerializeField] private List<Room> neighbouringRooms = new List<Room>();
+	[SerializeField] private List<Vector2Int> pathwayStartingPoints = new List<Vector2Int>();
+	[SerializeField] private List<Vector2Int> pathwayEndPoints = new List<Vector2Int>();
 
 	public string Name { get => string.Format( "Room [{0}]", ID ); private set => name = value; }
 	public int ID { get => iD; set => iD = value; }
@@ -375,6 +527,9 @@ public class Room : MonoBehaviour
 	public Vector2Int Size { get => size; set => size = value; }
 	public List<Tile> TilesInRoom { get => tilesInRoom; set => tilesInRoom = value; }
 	public List<Room> NeighbouringRooms { get => neighbouringRooms; set => neighbouringRooms = value; }
+	public List<Vector2Int> PathwayStartingPoints { get => pathwayStartingPoints; set => pathwayStartingPoints = value; }
+	public List<Vector2Int> PathwayEndPoints { get => pathwayEndPoints; set => pathwayEndPoints = value; }
+	public int NeighbourDetectionRange { get => neighbourDetectionRange; set => neighbourDetectionRange = value; }
 
 	/// <summary>
 	/// Add Tile to tiles in room list.
@@ -410,14 +565,20 @@ public class Room : MonoBehaviour
 	/// Get Neighbouring Rooms.
 	/// </summary>
 	/// <param name="range"> How far the check for other room tiles. </param>
-	public void GetNeighbours( List<Tile> tilesInDungeon, int range )
+	public void GetNeighbours( List<Tile> tilesInDungeon )
 	{
 		List<Tile> tileInRange = new List<Tile>();
+
+		if( size.x > size.y ) neighbourDetectionRange += size.x / 2;
+		else if( size.x < size.y ) neighbourDetectionRange += size.y / 2;
+		else if( size.x == size.y ) neighbourDetectionRange += size.x / 2;
+
 		foreach( Tile tile in tilesInDungeon )
 		{
-			if( Vector3.Distance( transform.position, tile.transform.position ) < range && !neighbouringRooms.Contains( tile.ParentRoom ) )
+			if( Vector3.Distance( transform.position, tile.transform.position ) < neighbourDetectionRange && !neighbouringRooms.Contains( tile.ParentRoom ) && tile.ParentRoom != this )
 			{
 				neighbouringRooms.Add( tile.ParentRoom );
+				if( tile.ParentRoom.GetComponent<Room>()?.neighbouringRooms.Contains( this ) == false ) tile.ParentRoom.GetComponent<Room>()?.neighbouringRooms.Add( this );
 			}
 		}
 	}
