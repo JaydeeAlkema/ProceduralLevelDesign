@@ -6,6 +6,10 @@ using UnityEditor;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+///TODO:
+/// Fix pathways not being closed correctly
+/// Fix rooms not knowing where the pathways start/end and thus not allowing for an entrance to the room.
+
 public class DungenRoomFirst : MonoBehaviour
 {
 	[BoxGroup( "Dungeon Generation Settings" )] [SerializeField] private bool randomizeSeed;
@@ -377,6 +381,7 @@ public class DungenRoomFirst : MonoBehaviour
 				Room neighbourRoom = roomsInDungeon[r].NeighbouringRooms[rn];
 
 				int pathwayIndex = 0;
+				int pathwayNeighbourIndex = 0;
 
 				for( int i = 0; i < originRoom.PathwaysComplete.Count; i++ )
 				{
@@ -386,7 +391,15 @@ public class DungenRoomFirst : MonoBehaviour
 					}
 				}
 
-				if( originRoom.PathwaysComplete[pathwayIndex] == false )
+				for( int i = 0; i < neighbourRoom.PathwaysComplete.Count; i++ )
+				{
+					if( neighbourRoom.PathwaysComplete[i] == false )
+					{
+						pathwayNeighbourIndex = i;
+					}
+				}
+
+				if( originRoom.PathwaysComplete[pathwayIndex] == false && neighbourRoom.PathwaysComplete[pathwayNeighbourIndex] == false )
 				{
 					List<Tile> pathwayTiles = new List<Tile>();
 
@@ -429,6 +442,7 @@ public class DungenRoomFirst : MonoBehaviour
 
 						if( pathwayTilePos == pathwayEndingPos )
 						{
+							pathwayTilePos = pathwayEndingPos;
 							newTile.Type = TileType.DOOR;
 							newTile = PlaceTile( pathwayTilePos, pathwaysParent, originRoom, false );
 							originRoom.PathwaysComplete[pathwayIndex] = true;
