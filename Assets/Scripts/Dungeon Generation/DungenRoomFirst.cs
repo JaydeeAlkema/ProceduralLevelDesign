@@ -127,14 +127,33 @@ public class DungenRoomFirst : MonoBehaviour
 
 		// Fail-safe
 		// Destroy all child objects from the rooms parent.
+		List<GameObject> roomsInScene = new List<GameObject>();
 		for( int i = 0; i < roomsParent.childCount; i++ )
 		{
-			DestroyImmediate( roomsParent.GetChild( i ).gameObject );
+			roomsInScene.Add( roomsParent.GetChild( i ).gameObject );
+		}
+		for( int r = 0; r < roomsInScene.Count; r++ )
+		{
+			DestroyImmediate( roomsInScene[r].gameObject );
+		}
+		// Destroy all child objects from the Pathways parent.
+		List<GameObject> pathwaysInScene = new List<GameObject>();
+		for( int i = 0; i < pathwaysParent.childCount; i++ )
+		{
+			pathwaysInScene.Add( pathwaysParent.GetChild( i ).gameObject );
+		}
+		for( int p = 0; p < pathwaysInScene.Count; p++ )
+		{
+			DestroyImmediate( pathwaysInScene[p].gameObject );
 		}
 
 		totalTilesInDungeon.Clear();
 		roomsInDungeon.Clear();
 		pathwayTilesInDungeon.Clear();
+
+		roomsInScene.Clear();
+		pathwaysInScene.Clear();
+
 		totalTries = 0;
 		roomIndex = 0;
 	}
