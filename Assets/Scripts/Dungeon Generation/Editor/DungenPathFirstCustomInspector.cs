@@ -4,28 +4,28 @@ using UnityEngine;
 using UnityEditor;
 using System.Reflection;
 
-using DungeonGenerationRoomFirst;
+using DungeonGenerationPathFirst;
 
-public class DungenRoomFirstCustomInspector : MonoBehaviour
+public class DungenPathFirstCustomInspector : MonoBehaviour
 {
-	private static DungenRoomFirst dungenRoomFirst;
+	private static DungenPathFirst dungenPathFirst;
 
-	[MenuItem( "Dungen/Room First/Generate Dungeon" )]
+	[MenuItem( "Dungen/Path First/Generate Dungeon" )]
 	private static void GenerateDungeon()
 	{
 		ClearConsole();
 
-		dungenRoomFirst = FindObjectOfType<DungenRoomFirst>();
-		dungenRoomFirst.Generate();
+		dungenPathFirst = FindObjectOfType<DungenPathFirst>();
+		dungenPathFirst.GenerateDungeon();
 	}
 
-	[MenuItem( "Dungen/Room First/Clear Dungeon" )]
+	[MenuItem( "Dungen/Path First/Clear Dungeon" )]
 	private static void ClearDungeon()
 	{
 		ClearConsole();
 
-		dungenRoomFirst = FindObjectOfType<DungenRoomFirst>();
-		dungenRoomFirst.ClearDungeon();
+		dungenPathFirst = FindObjectOfType<DungenPathFirst>();
+		dungenPathFirst.ClearDungeon();
 	}
 
 	public static void ClearConsole()

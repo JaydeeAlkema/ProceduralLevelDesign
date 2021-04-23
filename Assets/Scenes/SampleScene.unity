@@ -153,6 +153,36 @@ Transform:
   m_Father: {fileID: 1564308582}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &521858791
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 521858792}
+  m_Layer: 0
+  m_Name: Pathways
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &521858792
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 521858791}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1596739995}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &640536485
 GameObject:
   m_ObjectHideFlags: 0
@@ -183,6 +213,36 @@ Transform:
   m_Father: {fileID: 1564308582}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1308453284
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1308453285}
+  m_Layer: 0
+  m_Name: Rooms
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1308453285
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1308453284}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1596739995}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1564308580
 GameObject:
   m_ObjectHideFlags: 0
@@ -199,7 +259,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1564308581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -212,13 +272,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c588318b29396b24c97269893c4f2292, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  randomizeSeed: 0
-  seed: 72231844
-  dungeonSize: {x: 25, y: 25}
-  amountOfRooms: 25
+  randomizeSeed: 1
+  seed: 1194569362
+  dungeonSize: {x: 100, y: 100}
+  amountOfRooms: 100
   amountOfTries: 1000
-  minRoomSize: {x: 3, y: 3}
-  maxRoomSize: {x: 6, y: 6}
+  minRoomSize: {x: 9, y: 9}
+  maxRoomSize: {x: 18, y: 18}
   roomsParent: {fileID: 640536486}
   pathwaysParent: {fileID: 56577430}
   tileSize: 2
@@ -232,8 +292,8 @@ MonoBehaviour:
   pathwayTilesInDungeon: []
   totalTilesInDungeon: []
   showRoomNeighbourRange: 0
-  showRoomNeighbour: 1
-  showRoomPathwayStartingpoints: 1
+  showRoomNeighbour: 0
+  showRoomPathwayStartingpoints: 0
   showRoomPathwayEndpoints: 0
 --- !u!4 &1564308582
 Transform:
@@ -250,6 +310,106 @@ Transform:
   - {fileID: 56577430}
   m_Father: {fileID: 0}
   m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1596739993
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1596739995}
+  - component: {fileID: 1596739994}
+  m_Layer: 0
+  m_Name: Dungeon Generator (Path First)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1596739994
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1596739993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c14787402e41f14689aadfe1bf88de2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  randomizeSeed: 1
+  seed: 2071850419
+  roomParentTransform: {fileID: 1308453285}
+  minRoomSize: {x: 3, y: 3}
+  maxRoomSize: {x: 6, y: 6}
+  pathwayParentTransform: {fileID: 521858792}
+  minPathwayCount: 8
+  maxPathwayCount: 16
+  minPathwayLength: 6
+  maxPathwayLength: 9
+  tileSize: 1
+  tileGroundObjects:
+  - {fileID: 1771317373563521373, guid: f5ffe3e08727642489dbff9dda5caa23, type: 3}
+  tileWallObjects:
+  - {fileID: 4994870979389840053, guid: 69d7f5432a7ed504c8fc3218be7298aa, type: 3}
+  tileOuterCornerObjects:
+  - {fileID: 4994870979389840053, guid: cc3d25317cbb02c489642e227455792e, type: 3}
+  tileInnerCornerObjects:
+  - {fileID: 4994870979389840053, guid: cc3d25317cbb02c489642e227455792e, type: 3}
+  enemyParentTransform: {fileID: 1947753472}
+  enemyLists: []
+  spawnChance: 1
+  Rooms: []
+  tiles: []
+--- !u!4 &1596739995
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1596739993}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1308453285}
+  - {fileID: 521858792}
+  - {fileID: 1947753472}
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1947753471
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1947753472}
+  m_Layer: 0
+  m_Name: Enemies
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1947753472
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1947753471}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1596739995}
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!108 &2138677392 stripped
 Light:
