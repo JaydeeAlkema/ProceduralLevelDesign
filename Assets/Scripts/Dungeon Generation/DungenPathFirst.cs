@@ -74,7 +74,7 @@ namespace DungeonGenerationPathFirst
 			GeneratePathwaysWithRooms();
 
 			// Highly Inefficient... But it works!
-			//PlaceWalls();
+			PlaceWalls();
 
 			//SpawnEnemiesInsideTheRooms();
 
@@ -247,9 +247,11 @@ namespace DungeonGenerationPathFirst
 			// We could check for duplicate tile and return the function, but this makes the hierarchy cleaner.
 			for( int t = 0; t < tiles.Count; t++ )
 			{
-				if( tiles[t].Coordinates == coordinates * tileSize )
+				if( tiles[t].Coordinates == coordinates )
 				{
-					return;
+					GameObject tileOBJ = tiles[t].gameObject;
+					tiles.RemoveAt( t );
+					DestroyImmediate( tileOBJ );
 				}
 			}
 
@@ -286,8 +288,7 @@ namespace DungeonGenerationPathFirst
 			{
 				List<Tile> neighbourTiles = new List<Tile>();
 
-				GameObject tileGO = new GameObject();
-				Tile tile = tileGO.AddComponent<Tile>();
+				Tile tile = tiles[t];
 
 				//tile.name = tiles[t].name;
 				tile.Coordinates = tiles[t].Coordinates;
@@ -367,9 +368,11 @@ namespace DungeonGenerationPathFirst
 					}
 				}
 
-				if( neighbourTiles.Count < 8 )
+				if( leftTile != null && topLeftTile != null && rightTile != null && topRightTile != null && bottomLeftTile != null && bottomRightTile != null && topTile != null && bottomTile != null )
 				{
-					tile.Type = TileType.WALL;
+					tile.Type = TileType.GROUND;
+					tile.Graphic = tileWallObjects[Random.Range( 0, tileGroundObjects.Count )];
+					tile.GraphicRotation = Quaternion.Euler( 0, 0, 0 );
 				}
 				#endregion
 
@@ -377,27 +380,31 @@ namespace DungeonGenerationPathFirst
 				// Check if this tile is all the way in the left of a room. a.k.a. no Left neighbour.
 				if( leftTile == null && rightTile != null && topTile != null && bottomTile != null )
 				{
+					tile.Type = TileType.WALL;
 					tile.Graphic = tileWallObjects[Random.Range( 0, tileWallObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( 0, 0, 0 );
 				}
 
 				// Check if this tile is all the way in the Right of a room. a.k.a. no Right neighbour.
-				else if( leftTile != null && rightTile == null && topTile != null && bottomTile != null )
+				if( leftTile != null && rightTile == null && topTile != null && bottomTile != null )
 				{
+					tile.Type = TileType.WALL;
 					tile.Graphic = tileWallObjects[Random.Range( 0, tileWallObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( 0, 180, 0 );
 				}
 
 				// Check if this tile is all the way in the Top of a room. a.k.a. no top neighbour.
-				else if( leftTile != null && rightTile != null && topTile == null && bottomTile != null )
+				if( leftTile != null && rightTile != null && topTile == null && bottomTile != null )
 				{
+					tile.Type = TileType.WALL;
 					tile.Graphic = tileWallObjects[Random.Range( 0, tileWallObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( 0, 90, 0 );
 				}
 
 				// Check if this tile is all the way in the Bottom of a room. a.k.a. no bottom neighbour.
-				else if( leftTile != null && rightTile != null && topTile != null && bottomTile == null )
+				if( leftTile != null && rightTile != null && topTile != null && bottomTile == null )
 				{
+					tile.Type = TileType.WALL;
 					tile.Graphic = tileWallObjects[Random.Range( 0, tileWallObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( 0, -180, 0 );
 				}
@@ -405,29 +412,33 @@ namespace DungeonGenerationPathFirst
 
 				#region Outer Corner Checks
 				// Top Left Outer Corner.
-				else if( leftTile == null && rightTile != null && topTile == null && bottomTile != null )
+				if( leftTile == null && topLeftTile == null && rightTile != null && topRightTile == null && bottomLeftTile == null && bottomRightTile != null && topTile == null && bottomTile != null )
 				{
+					tile.Type = TileType.OUTER_CORNER;
 					tile.Graphic = tileOuterCornerObjects[Random.Range( 0, tileOuterCornerObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( 0, 0, 0 );
 				}
 
 				// Top Right Outer Corner.
-				else if( leftTile != null && rightTile == null && topTile == null && bottomTile != null )
+				if( leftTile != null && topLeftTile == null && rightTile == null && topRightTile == null && bottomLeftTile != null && bottomRightTile == null && topTile == null && bottomTile != null )
 				{
+					tile.Type = TileType.OUTER_CORNER;
 					tile.Graphic = tileOuterCornerObjects[Random.Range( 0, tileOuterCornerObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( 0, 180, 0 );
 				}
 
 				// Bottom Left Outer Corner.
-				else if( leftTile == null && rightTile != null && topTile != null && bottomTile == null )
+				if( leftTile == null && topLeftTile == null && rightTile != null && topRightTile != null && bottomLeftTile == null && bottomRightTile == null && topTile != null && bottomTile == null )
 				{
+					tile.Type = TileType.OUTER_CORNER;
 					tile.Graphic = tileOuterCornerObjects[Random.Range( 0, tileOuterCornerObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( 0, 90, 0 );
 				}
 
 				// Bottom Right Outer Corner.
-				else if( leftTile != null && rightTile == null && topTile != null && bottomTile == null )
+				if( leftTile != null && topLeftTile != null && rightTile == null && topRightTile == null && bottomLeftTile == null && bottomRightTile == null && topTile != null && bottomTile == null )
 				{
+					tile.Type = TileType.OUTER_CORNER;
 					tile.Graphic = tileOuterCornerObjects[Random.Range( 0, tileOuterCornerObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( 0, 180, 0 );
 				}
@@ -435,24 +446,30 @@ namespace DungeonGenerationPathFirst
 
 				#region Inner Corner Checks
 				// Top Left Inner Corner
-				// We use a right sprite because the tile might be topleft. But the Sprite is top right because it's an inside corner.
-				else if( topLeftTile == null )
+				if( leftTile != null && topLeftTile == null && rightTile != null && topRightTile != null && bottomLeftTile != null && bottomRightTile != null && topTile != null && bottomTile != null )
 				{
+					tile.Type = TileType.INNER_CORNER;
 					tile.Graphic = tileInnerCornerObjects[Random.Range( 0, tileInnerCornerObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( 0, 0, 0 );
 				}
-				else if( topRightTile == null )
+				// Top Right Inner Corner
+				if( leftTile != null && topLeftTile != null && rightTile == null && topRightTile != null && bottomLeftTile != null && bottomRightTile != null && topTile != null && bottomTile != null )
 				{
+					tile.Type = TileType.INNER_CORNER;
 					tile.Graphic = tileInnerCornerObjects[Random.Range( 0, tileInnerCornerObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( 0, 180, 0 );
 				}
-				else if( bottomLeftTile == null )
+				// Bottom Left Inner Corner
+				if( leftTile != null && topLeftTile != null && rightTile != null && topRightTile != null && bottomLeftTile == null && bottomRightTile != null && topTile != null && bottomTile != null )
 				{
+					tile.Type = TileType.INNER_CORNER;
 					tile.Graphic = tileInnerCornerObjects[Random.Range( 0, tileInnerCornerObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( 0, 90, 0 );
 				}
-				else if( bottomRightTile == null )
+				// Bottom Right Inner Corner
+				if( leftTile != null && topLeftTile != null && rightTile != null && topRightTile != null && bottomLeftTile != null && bottomRightTile == null && topTile != null && bottomTile != null )
 				{
+					tile.Type = TileType.INNER_CORNER;
 					tile.Graphic = tileInnerCornerObjects[Random.Range( 0, tileInnerCornerObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( 0, -180, 0 );
 				}
@@ -503,6 +520,10 @@ namespace DungeonGenerationPathFirst
 			foreach( Tile tile in tiles )
 			{
 				Gizmos.color = Color.white;
+				if( tile.Type == TileType.INNER_CORNER ) Gizmos.color = Color.blue;
+				else if( tile.Type == TileType.OUTER_CORNER ) Gizmos.color = Color.cyan;
+				else if( tile.Type == TileType.WALL ) Gizmos.color = Color.red;
+
 				Gizmos.DrawCube( new Vector3Int( tile.Coordinates.x, 0, tile.Coordinates.y ), new Vector3Int( tile.Size, tile.Size, tile.Size ) );
 			}
 		}
@@ -510,10 +531,11 @@ namespace DungeonGenerationPathFirst
 
 	public enum TileType
 	{
-		GROUND,     // A normal ground tile. (surrounded by other tiles)
-		WALL,       // Wall Tile. (Missing Neighbour on one side)
-		CORNER,     // Corner Tile. (Missing Neighbour on atleast 2 sides)
-		DOOR        // Door Tile. (Missing Corner neighbours)
+		GROUND,         // A normal ground tile. (surrounded by other tiles)
+		WALL,           // Wall Tile. (Missing Neighbour on one side)
+		OUTER_CORNER,   // Outer Corner Tile. (Missing Neighbour on atleast 2 sides)
+		INNER_CORNER,   // Outer Corner Tile.
+		DOOR            // Door Tile. (Missing Corner neighbours)
 	}
 
 	public enum RoomType
