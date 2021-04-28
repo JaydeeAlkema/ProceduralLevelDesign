@@ -14,7 +14,6 @@ namespace DungeonGenerationPathFirst
 	/// </summary>
 	public class DungenPathFirst : MonoBehaviour
 	{
-		#region Private Variables
 		[BoxGroup( "Generation Settings" )] [SerializeField] private bool randomizeSeed = false;               // Determines if the seed should be randomized each time.
 		[BoxGroup( "Generation Settings" )] [SerializeField] private string seed = "";
 		[BoxGroup( "Generation Settings" )] [SerializeField] private Transform roomParentTransform = default;   // Parent of the rooms in the scene.
@@ -32,31 +31,27 @@ namespace DungeonGenerationPathFirst
 		[BoxGroup( "Tile Objects" )] [SerializeField] private List<GameObject> tileOuterCornerObjects = new List<GameObject>();         // Tile Outer Corner Left Sprite
 		[BoxGroup( "Tile Objects" )] [SerializeField] private List<GameObject> tileInnerCornerObjects = new List<GameObject>();         // Tile Inner Corner Left Sprite
 
-		[BoxGroup( "Enemy Settings" )] [SerializeField] private Transform enemyParentTransform = default;  // The parent transform of the enemies.
-		[BoxGroup( "Enemy Settings" )] [SerializeField] private List<EnemyList> enemyLists = new List<EnemyList>();    // List with Enemy Lists. Within these lists are the enemies that can be spawned per theme.
-		[BoxGroup( "Enemy Settings" )] [SerializeField] private int spawnChance = 1;                       // How much percentage chance there is to spawn an enemy.
+		[BoxGroup( "Enemy Settings" )] [SerializeField] private Transform enemyParentTransform = default;               // The parent transform of the enemies.
+		[BoxGroup( "Enemy Settings" )] [SerializeField] private List<EnemyList> enemyLists = new List<EnemyList>();     // List with Enemy Lists. Within these lists are the enemies that can be spawned per theme.
+		[BoxGroup( "Enemy Settings" )] [SerializeField] private int spawnChance = 1;                                    // How much percentage chance there is to spawn an enemy.
 
 		[BoxGroup( "Generated Assets" )] [SerializeField] private List<Room> Rooms = new List<Room>();       // List with all the rooms in the dungeon.
 		[BoxGroup( "Generated Assets" )] [SerializeField] private List<Tile> tiles = new List<Tile>();       // List with all the tiles in the dungeon.
+
+		[BoxGroup( "Debugging" )] [SerializeField] private bool renderDungeonAsGizmos = false;      // Render the entire dungeon using gizmos.
 
 		private DateTime startTime; // At which time we started generating the dungeon.
 
 		private int roomIndex = 0;      // Index of the room (Used for giving the rooms their unique ID in their names).
 		private int pathwayIndex = 0;   // Index of the Pathway (Used for giving the Pathways their unique ID in their names).
-		#endregion
 
-		#region Public Properties
 		public string Seed { get => seed; set => seed = value; }
-		#endregion
 
-		#region Monobehaviour Callbacks
 		private void Start()
 		{
 			GenerateDungeon();
 		}
-		#endregion
 
-		#region Dungeon Generation
 		/// <summary>
 		/// The Generate Dungeon Function in theory is just a function that calls other functions.
 		/// Might sound a bit backwards, but this makes a nice readeable script layout.
@@ -71,16 +66,21 @@ namespace DungeonGenerationPathFirst
 			ClearDungeon();
 
 			Debug.Log( "Generating Dungeon" );
-			GeneratePathwaysWithRooms();
+			GeneratePathways();
 
 			// Highly Inefficient... But it works!
-			PlaceWalls();
+			SetTilesType();
+
+			InstantiateTilesGraphic();
 
 			//SpawnEnemiesInsideTheRooms();
 
 			Debug.Log( "Dungeon Generation Took: " + ( DateTime.Now - startTime ).Milliseconds + "ms" );
 		}
 
+		/// <summary>
+		/// Clears the entire dungeon. Mainly used for debugging purposes.
+		/// </summary>
 		public void ClearDungeon()
 		{
 			// Get any left behind room objects and put them in a temp list.
@@ -117,11 +117,13 @@ namespace DungeonGenerationPathFirst
 			pathwayChildren.Clear();
 		}
 
+
+
 		/// <summary>
 		/// This function generates a path in a random direction. After the path is generated, a room will be generated at the end of the path.
 		/// This goes on until we reach the amount of pathways chosen.
 		/// </summary>
-		private void GeneratePathwaysWithRooms()
+		private void GeneratePathways()
 		{
 			// pick a random amount of pathways that need to be generated.
 			int pathwayAmount = Random.Range( minPathwayCount, maxPathwayCount );
@@ -180,33 +182,35 @@ namespace DungeonGenerationPathFirst
 
 
 				// Generate the path for the generated length
-				// Make the path 5 wide. We dont have to worry about duplicate tiles because those won't get generated anyway.
+				// Make the path 3 wide. We dont have to worry about duplicate tiles because those won't get generated anyway.
 				for( int j = 0; j < pathwayLength; j++ )
 				{
+					CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ) - 1, coordinates.y + ( coordinatesDir.y * j ) - 1 ), pathwayGO.transform );
 					CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ), coordinates.y + ( coordinatesDir.y * j ) ), pathwayGO.transform );
+					CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ) + 1, coordinates.y + ( coordinatesDir.y * j ) + 1 ), pathwayGO.transform );
 				}
 
 				// Create a room at the end of each pathway.
-				GenerateRoom( coordinates );
+				GenerateRoom( coordinates, minRoomSize, maxRoomSize );
 				coordinates.x += coordinatesDir.x * pathwayLength;
 				coordinates.y += coordinatesDir.y * pathwayLength;
 
 				pathwayIndex++;
 			}
 			// Generate one final room for the final pathway to fix the dead end.
-			GenerateRoom( coordinates );
+			GenerateRoom( coordinates, minRoomSize * 2, maxRoomSize * 2 );
 		}
 
 		/// <summary>
 		/// Generates a room at the givin coordinates with the givin min/max roomsize.
 		/// </summary>
 		/// <param name="coordinates"> Room Starting Coordinates. </param>
-		private void GenerateRoom( Vector2Int coordinates )
+		private void GenerateRoom( Vector2Int coordinates, Vector2Int _roomsizeMIN, Vector2Int _roomsizeMAX )
 		{
 			roomIndex++;
 
-			int roomSizeX = Random.Range( minRoomSize.x, maxRoomSize.x );
-			int roomSizeY = Random.Range( minRoomSize.y, maxRoomSize.y );
+			int roomSizeX = Random.Range( _roomsizeMIN.x, _roomsizeMAX.x );
+			int roomSizeY = Random.Range( _roomsizeMIN.y, _roomsizeMAX.y );
 
 			// Force the width and height to be an Odd number
 			if( roomSizeX % 2 == 0 )
@@ -218,7 +222,7 @@ namespace DungeonGenerationPathFirst
 			Room room = roomGO.AddComponent<Room>();
 
 			room.Name = "Room [" + roomIndex + "]";
-			room.Coordinates = coordinates * tileSize;
+			room.Coordinates = coordinates;
 			room.RoomSize = new Vector2Int( roomSizeX, roomSizeY );
 
 			roomGO.name = room.Name;
@@ -247,7 +251,7 @@ namespace DungeonGenerationPathFirst
 			// We could check for duplicate tile and return the function, but this makes the hierarchy cleaner.
 			for( int t = 0; t < tiles.Count; t++ )
 			{
-				if( tiles[t].Coordinates == coordinates )
+				if( tiles[t].Coordinates == new Vector2Int( coordinates.x, coordinates.y ) * tileSize )
 				{
 					GameObject tileOBJ = tiles[t].gameObject;
 					tiles.RemoveAt( t );
@@ -282,7 +286,7 @@ namespace DungeonGenerationPathFirst
 		/// The placewalls functions will loop through all the tiles in the dungeoon, look at their coordinates and the amount of neighbouring tiles.
 		/// Depending on which neighbouring tiles is missing, it places a wall.
 		/// </summary>
-		private void PlaceWalls()
+		private void SetTilesType()
 		{
 			for( int t = 0; t < tiles.Count; t++ )
 			{
@@ -307,7 +311,6 @@ namespace DungeonGenerationPathFirst
 				Tile bottomLeftTile = null;
 				Tile bottomRightTile = null;
 
-				#region Get neighbouring tiles
 				// Get all the neighbour tiles.
 				for( int i = 0; i < tiles.Count; i++ )
 				{
@@ -368,21 +371,23 @@ namespace DungeonGenerationPathFirst
 					}
 				}
 
-				if( leftTile != null && topLeftTile != null && rightTile != null && topRightTile != null && bottomLeftTile != null && bottomRightTile != null && topTile != null && bottomTile != null )
+				if( neighbourTiles.Count == 8 )
 				{
 					tile.Type = TileType.GROUND;
-					tile.Graphic = tileWallObjects[Random.Range( 0, tileGroundObjects.Count )];
-					tile.GraphicRotation = Quaternion.Euler( 0, 0, 0 );
+					tile.Graphic = tileGroundObjects[Random.Range( 0, tileGroundObjects.Count )];
+					tile.GraphicRotation = Quaternion.Euler( -90, 0, 0 );
 				}
-				#endregion
 
-				#region Left, Right, Top and Bottom checks
+				//#####################\\
+				// WALLS        CHECKS \\
+				//#####################\\
+
 				// Check if this tile is all the way in the left of a room. a.k.a. no Left neighbour.
 				if( leftTile == null && rightTile != null && topTile != null && bottomTile != null )
 				{
 					tile.Type = TileType.WALL;
 					tile.Graphic = tileWallObjects[Random.Range( 0, tileWallObjects.Count )];
-					tile.GraphicRotation = Quaternion.Euler( 0, 0, 0 );
+					tile.GraphicRotation = Quaternion.Euler( -90, 90, 0 );
 				}
 
 				// Check if this tile is all the way in the Right of a room. a.k.a. no Right neighbour.
@@ -390,7 +395,7 @@ namespace DungeonGenerationPathFirst
 				{
 					tile.Type = TileType.WALL;
 					tile.Graphic = tileWallObjects[Random.Range( 0, tileWallObjects.Count )];
-					tile.GraphicRotation = Quaternion.Euler( 0, 180, 0 );
+					tile.GraphicRotation = Quaternion.Euler( -90, -90, 0 );
 				}
 
 				// Check if this tile is all the way in the Top of a room. a.k.a. no top neighbour.
@@ -398,7 +403,7 @@ namespace DungeonGenerationPathFirst
 				{
 					tile.Type = TileType.WALL;
 					tile.Graphic = tileWallObjects[Random.Range( 0, tileWallObjects.Count )];
-					tile.GraphicRotation = Quaternion.Euler( 0, 90, 0 );
+					tile.GraphicRotation = Quaternion.Euler( -90, 180, 0 );
 				}
 
 				// Check if this tile is all the way in the Bottom of a room. a.k.a. no bottom neighbour.
@@ -406,79 +411,97 @@ namespace DungeonGenerationPathFirst
 				{
 					tile.Type = TileType.WALL;
 					tile.Graphic = tileWallObjects[Random.Range( 0, tileWallObjects.Count )];
-					tile.GraphicRotation = Quaternion.Euler( 0, -180, 0 );
+					tile.GraphicRotation = Quaternion.Euler( -90, 0, 0 );
 				}
-				#endregion
 
-				#region Outer Corner Checks
+				//#####################\\
+				// OUTER CORNER CHECKS \\
+				//#####################\\
+
 				// Top Left Outer Corner.
-				if( leftTile == null && topLeftTile == null && rightTile != null && topRightTile == null && bottomLeftTile == null && bottomRightTile != null && topTile == null && bottomTile != null )
+				if( leftTile == null && topLeftTile == null && topTile == null )
 				{
 					tile.Type = TileType.OUTER_CORNER;
 					tile.Graphic = tileOuterCornerObjects[Random.Range( 0, tileOuterCornerObjects.Count )];
-					tile.GraphicRotation = Quaternion.Euler( 0, 0, 0 );
+					tile.GraphicRotation = Quaternion.Euler( -90, 90, 0 );
 				}
 
 				// Top Right Outer Corner.
-				if( leftTile != null && topLeftTile == null && rightTile == null && topRightTile == null && bottomLeftTile != null && bottomRightTile == null && topTile == null && bottomTile != null )
+				if( rightTile == null && topRightTile == null && topTile == null )
 				{
 					tile.Type = TileType.OUTER_CORNER;
 					tile.Graphic = tileOuterCornerObjects[Random.Range( 0, tileOuterCornerObjects.Count )];
-					tile.GraphicRotation = Quaternion.Euler( 0, 180, 0 );
+					tile.GraphicRotation = Quaternion.Euler( -90, 180, 0 );
 				}
 
 				// Bottom Left Outer Corner.
-				if( leftTile == null && topLeftTile == null && rightTile != null && topRightTile != null && bottomLeftTile == null && bottomRightTile == null && topTile != null && bottomTile == null )
+				if( leftTile == null && bottomLeftTile == null && bottomTile == null )
 				{
 					tile.Type = TileType.OUTER_CORNER;
 					tile.Graphic = tileOuterCornerObjects[Random.Range( 0, tileOuterCornerObjects.Count )];
-					tile.GraphicRotation = Quaternion.Euler( 0, 90, 0 );
+					tile.GraphicRotation = Quaternion.Euler( -90, 0, 0 );
 				}
 
 				// Bottom Right Outer Corner.
-				if( leftTile != null && topLeftTile != null && rightTile == null && topRightTile == null && bottomLeftTile == null && bottomRightTile == null && topTile != null && bottomTile == null )
+				if( rightTile == null && bottomRightTile == null && bottomTile == null )
 				{
 					tile.Type = TileType.OUTER_CORNER;
 					tile.Graphic = tileOuterCornerObjects[Random.Range( 0, tileOuterCornerObjects.Count )];
-					tile.GraphicRotation = Quaternion.Euler( 0, 180, 0 );
+					tile.GraphicRotation = Quaternion.Euler( -90, -90, 0 );
 				}
-				#endregion
 
-				#region Inner Corner Checks
+				//#####################\\
+				// INNER CORNER CHECKS \\
+				//#####################\\
+
 				// Top Left Inner Corner
 				if( leftTile != null && topLeftTile == null && rightTile != null && topRightTile != null && bottomLeftTile != null && bottomRightTile != null && topTile != null && bottomTile != null )
 				{
 					tile.Type = TileType.INNER_CORNER;
 					tile.Graphic = tileInnerCornerObjects[Random.Range( 0, tileInnerCornerObjects.Count )];
-					tile.GraphicRotation = Quaternion.Euler( 0, 0, 0 );
+					tile.GraphicRotation = Quaternion.Euler( -90, -90, 0 );
 				}
 				// Top Right Inner Corner
-				if( leftTile != null && topLeftTile != null && rightTile == null && topRightTile != null && bottomLeftTile != null && bottomRightTile != null && topTile != null && bottomTile != null )
+				if( leftTile != null && topLeftTile != null && rightTile != null && topRightTile == null && bottomLeftTile != null && bottomRightTile != null && topTile != null && bottomTile != null )
 				{
 					tile.Type = TileType.INNER_CORNER;
 					tile.Graphic = tileInnerCornerObjects[Random.Range( 0, tileInnerCornerObjects.Count )];
-					tile.GraphicRotation = Quaternion.Euler( 0, 180, 0 );
+					tile.GraphicRotation = Quaternion.Euler( -90, 0, 0 );
 				}
 				// Bottom Left Inner Corner
 				if( leftTile != null && topLeftTile != null && rightTile != null && topRightTile != null && bottomLeftTile == null && bottomRightTile != null && topTile != null && bottomTile != null )
 				{
 					tile.Type = TileType.INNER_CORNER;
 					tile.Graphic = tileInnerCornerObjects[Random.Range( 0, tileInnerCornerObjects.Count )];
-					tile.GraphicRotation = Quaternion.Euler( 0, 90, 0 );
+					tile.GraphicRotation = Quaternion.Euler( -90, -180, 0 );
 				}
 				// Bottom Right Inner Corner
 				if( leftTile != null && topLeftTile != null && rightTile != null && topRightTile != null && bottomLeftTile != null && bottomRightTile == null && topTile != null && bottomTile != null )
 				{
 					tile.Type = TileType.INNER_CORNER;
 					tile.Graphic = tileInnerCornerObjects[Random.Range( 0, tileInnerCornerObjects.Count )];
-					tile.GraphicRotation = Quaternion.Euler( 0, -180, 0 );
+					tile.GraphicRotation = Quaternion.Euler( -90, 90, 0 );
 				}
-				#endregion
+
+				//#####################\\
+				// ROOM ENTRANCE CHECK \\
+				//#####################\\
 			}
 		}
-		#endregion
 
-		#region Enemy Spawning
+		/// <summary>
+		/// Instantiate all the tiles graphics.
+		/// </summary>
+		private void InstantiateTilesGraphic()
+		{
+			foreach( Tile tile in tiles )
+			{
+				GameObject tileGO = Instantiate( tile.Graphic, Vector3.zero, tile.GraphicRotation, tile.transform );
+				tileGO.transform.position = tile.transform.position;
+			}
+		}
+
+
 		/// <summary>
 		/// Spawns enemies inside the rooms.
 		/// </summary>
@@ -499,7 +522,6 @@ namespace DungeonGenerationPathFirst
 				}
 			}
 		}
-
 		/// <summary>
 		/// Spawns an enemy at the given coordinates
 		/// </summary>
@@ -513,18 +535,22 @@ namespace DungeonGenerationPathFirst
 				GameObject newEnemyGO = Instantiate( enemyLists[0].Enemies[randEnemyIndex], coordinates, Quaternion.identity, parent );
 			}
 		}
-		#endregion
+
+
 
 		private void OnDrawGizmos()
 		{
-			foreach( Tile tile in tiles )
+			if( renderDungeonAsGizmos )
 			{
-				Gizmos.color = Color.white;
-				if( tile.Type == TileType.INNER_CORNER ) Gizmos.color = Color.blue;
-				else if( tile.Type == TileType.OUTER_CORNER ) Gizmos.color = Color.cyan;
-				else if( tile.Type == TileType.WALL ) Gizmos.color = Color.red;
+				foreach( Tile tile in tiles )
+				{
+					Gizmos.color = Color.white;
+					if( tile.Type == TileType.INNER_CORNER ) Gizmos.color = Color.blue;
+					else if( tile.Type == TileType.OUTER_CORNER ) Gizmos.color = Color.cyan;
+					else if( tile.Type == TileType.WALL ) Gizmos.color = Color.red;
 
-				Gizmos.DrawCube( new Vector3Int( tile.Coordinates.x, 0, tile.Coordinates.y ), new Vector3Int( tile.Size, tile.Size, tile.Size ) );
+					Gizmos.DrawCube( new Vector3Int( tile.Coordinates.x, 0, tile.Coordinates.y ), new Vector3Int( tile.Size, tile.Size, tile.Size ) );
+				}
 			}
 		}
 	}
