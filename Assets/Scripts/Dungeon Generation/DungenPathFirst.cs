@@ -185,8 +185,8 @@ namespace DungeonGenerationPathFirst
 				// Make the path 3 wide. We dont have to worry about duplicate tiles because those won't get generated anyway.
 				for( int j = 0; j < pathwayLength; j++ )
 				{
-					CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ) - 1, coordinates.y + ( coordinatesDir.y * j ) - 1 ), pathwayGO.transform );
 					CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ), coordinates.y + ( coordinatesDir.y * j ) ), pathwayGO.transform );
+					CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ) - 1, coordinates.y + ( coordinatesDir.y * j ) - 1 ), pathwayGO.transform );
 					CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ) + 1, coordinates.y + ( coordinatesDir.y * j ) + 1 ), pathwayGO.transform );
 				}
 
@@ -267,7 +267,7 @@ namespace DungeonGenerationPathFirst
 			tile.Size = tileSize;
 			tile.Coordinates = new Vector2Int( coordinates.x, coordinates.y ) * tileSize;
 			tile.Graphic = tileGroundObjects[Random.Range( 0, tileGroundObjects.Count )];
-			tile.GraphicRotation = Quaternion.Euler( 0, 0, 0 );
+			tile.GraphicRotation = Quaternion.Euler( -90, 0, 0 );
 
 			tileGO.name = tile.Name;
 			tileGO.transform.position = new Vector3Int( tile.Coordinates.x, 0, tile.Coordinates.y );
@@ -549,7 +549,7 @@ namespace DungeonGenerationPathFirst
 					else if( tile.Type == TileType.OUTER_CORNER ) Gizmos.color = Color.cyan;
 					else if( tile.Type == TileType.WALL ) Gizmos.color = Color.red;
 
-					Gizmos.DrawCube( new Vector3Int( tile.Coordinates.x, 0, tile.Coordinates.y ), new Vector3Int( tile.Size, tile.Size, tile.Size ) );
+					Gizmos.DrawCube( new Vector3Int( tile.Coordinates.x, tileSize, tile.Coordinates.y ), new Vector3Int( tile.Size, tile.Size, tile.Size ) );
 				}
 			}
 		}
