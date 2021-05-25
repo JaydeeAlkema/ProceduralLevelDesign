@@ -83,7 +83,6 @@ namespace DungeonGenerationPathFirst
 
 			CleanDungeon();
 
-			GenerateAdditionalRooms();
 			SetTilesType();
 			InstantiateTilesGraphic();
 
@@ -263,7 +262,7 @@ namespace DungeonGenerationPathFirst
 		/// Generates a room at the givin coordinates with the givin min/max roomsize.
 		/// </summary>
 		/// <param name="coordinates"> Room Starting Coordinates. </param>
-		private void GenerateRoom( Vector2Int coordinates, Vector2Int _roomsizeMIN, Vector2Int _roomsizeMAX, string roomName = default, RoomType roomType = RoomType.NONE, bool overwrite = true )
+		private void GenerateRoom( Vector2Int coordinates, Vector2Int _roomsizeMIN, Vector2Int _roomsizeMAX, string roomName = default, RoomType roomType = RoomType.NONE, bool overwrite = true, Transform _roomParentTransform = null )
 		{
 			bool generateNewRoom = true;
 
@@ -307,8 +306,14 @@ namespace DungeonGenerationPathFirst
 				}
 
 				roomGO.name = room.Name;
+
+				if( _roomParentTransform == null )
+					roomGO.transform.parent = roomParentTransform;
+				else
+					roomGO.transform.parent = _roomParentTransform;
+
 				roomGO.transform.position = new Vector3Int( coordinates.x, 0, coordinates.y );
-				roomGO.transform.parent = roomParentTransform;
+
 
 				rooms.Add( room );
 
@@ -318,23 +323,6 @@ namespace DungeonGenerationPathFirst
 					{
 						CreateTile( "Tile [" + ( coordinates.x + x ) + "]" + " " + "[" + ( coordinates.y + y ) + "]", new Vector2Int( coordinates.x - ( roomSizeX / 2 ) + x, coordinates.y - ( roomSizeY / 2 ) + y ), roomGO.transform, overwrite );
 					}
-				}
-			}
-		}
-
-		private void GenerateAdditionalRooms()
-		{
-
-			foreach( Room room in rooms )
-			{
-				int additionalRoomChance = Random.Range( 0, 100 );
-
-				if( additionalRoomChance <= 35 )
-				{
-
-					int tileIndex = Random.Range( 0, room.Tiles.Count );
-
-					GenerateRoom( room.Tiles[tileIndex].Coordinates, minRoomSize, maxRoomSize, room.Name + " [ADDITIONAL]" );
 				}
 			}
 		}
