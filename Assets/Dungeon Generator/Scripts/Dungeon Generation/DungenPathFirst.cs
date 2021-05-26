@@ -1,8 +1,8 @@
 ///	TODO: (Priority)
-/// -	Seperate many structs and classes into sepperate files for a more organized working environment.
+/// -	Seperate many structs and classes into sepperate files for a more organized working environment.							 (DONE)
 /// -	Seperate many methods into classes. Also for a more organized working environment.
 /// -	Add overwrites for many existing methods to make my own life easier. Like spawning an enemy by type instead of by a list.
-/// 
+
 /// TODO: (Nice to Have)
 /// -	Fix possible wrong implementation of the coordinate system. Spawning objects through the coordinates system leaves much to be desired.
 /// -	Build a seperate tool with which you can easily change the dungeon generation settings instead of the current massive inspector it needs now.
@@ -836,7 +836,6 @@ namespace DungeonGenerationPathFirst
 			}
 		}
 
-
 		public Room GetRoomByType( RoomType type )
 		{
 			Room returnRoom = null;
@@ -869,76 +868,6 @@ namespace DungeonGenerationPathFirst
 		}
 	}
 
-	public enum TileType
-	{
-		GROUND,         // A normal ground tile. (surrounded by other tiles)
-		WALL,           // Wall Tile. (Missing Neighbour on one side)
-		OUTER_CORNER,   // Outer Corner Tile. (Missing Neighbour on atleast 2 sides)
-		INNER_CORNER,   // Outer Corner Tile.
-		DOOR            // Door Tile. (Missing Corner neighbours)
-	}
-
-	public enum RoomType
-	{
-		NONE,
-		SPAWN,          // Player Spawn Room. (Always only 1 per level)
-		EXIT,           // Player Exit Room. (Always only 1 per level)
-		ENEMYSPAWN,     // Enemy Spawn Room. Most commong room type
-		SHOP,           // Shop where player can buy/sell items. 30% of spawning per level.
-		BOSS,           // Boss room, always present and always in the way of the exit.
-		TREASURE,       // Treasure rooms are rare, but grant some nice loot.
-		HUB,            // A hub room is nothing more than a room that connects to other rooms. See it as a place to breath and regen.
-		OBJECTIVE       // Objective rooms are rooms that hold the item(s) required to finish the objective.
-	}
-
-	[System.Serializable]
-	public class Tile : MonoBehaviour
-	{
-		[SerializeField] private new string name = default;
-		[SerializeField] private int size = 1;
-		[SerializeField] private TileType type = TileType.GROUND;
-		[SerializeField] private Vector2Int coordinates = Vector2Int.zero;
-		[SerializeField] private GameObject graphic = null;
-		[SerializeField] private Quaternion graphicRotation = Quaternion.identity;
-		[SerializeField] private Transform parentTransform = default;
-		[SerializeField] private bool populated = false;
-
-		public string Name { get => name; set => name = value; }
-		public int Size { get => size; set => size = value; }
-		public TileType Type { get => type; set => type = value; }
-		public Vector2Int Coordinates { get => coordinates; set => coordinates = value; }
-		public GameObject Graphic { get => graphic; set => graphic = value; }
-		public Quaternion GraphicRotation { get => graphicRotation; set => graphicRotation = value; }
-		public Transform ParentTransform { get => parentTransform; set => parentTransform = value; }
-		public bool Populated { get => populated; set => populated = value; }
-
-		public Tile( string name = null, TileType _type = TileType.GROUND, Vector2Int _coordinates = default, GameObject _graphic = null, Quaternion _graphicRotation = default, Transform _parentTransform = default )
-		{
-			this.name = name;
-			type = _type;
-			coordinates = _coordinates;
-			graphic = _graphic;
-			graphicRotation = _graphicRotation;
-			parentTransform = _parentTransform;
-		}
-	}
-
-	[System.Serializable]
-	public class Room : MonoBehaviour
-	{
-		[SerializeField] private new string name;
-		[SerializeField] private Vector2Int roomSize = new Vector2Int();
-		[SerializeField] private Vector2Int coordinates;
-		[SerializeField] private List<Tile> tiles = new List<Tile>();
-		[SerializeField] private RoomType type = RoomType.HUB;
-
-		public List<Tile> Tiles { get => tiles; set => tiles = value; }
-		public Vector2Int RoomSize { get => roomSize; set => roomSize = value; }
-		public Vector2Int Coordinates { get => coordinates; set => coordinates = value; }
-		public string Name { get => name; set => name = value; }
-		public RoomType Type { get => type; set => type = value; }
-	}
-
 	[System.Serializable]
 	public struct EnemyList
 	{
@@ -946,23 +875,6 @@ namespace DungeonGenerationPathFirst
 		[SerializeField] private List<GameObject> enemies;
 
 		public List<GameObject> Enemies { get => enemies; set => enemies = value; }
-		public string Name { get => name; set => name =  value ; }
-	}
-
-	[System.Serializable]
-	public struct Prop
-	{
-		[SerializeField] private string name;
-		[SerializeField] private GameObject prefabObject;
-		[SerializeField] private float spawnChance;
-		[Space]
-		[SerializeField] private Vector3 rotationOffset;
-		[SerializeField] private Vector3 positionOffset;
-
 		public string Name { get => name; set => name = value; }
-		public GameObject PrefabObject { get => prefabObject; set => prefabObject = value; }
-		public float SpawnChance { get => spawnChance; set => spawnChance = value; }
-		public Vector3 RotationOffset { get => rotationOffset; set => rotationOffset = value; }
-		public Vector3 PositionOffset { get => positionOffset; set => positionOffset = value; }
 	}
 }
