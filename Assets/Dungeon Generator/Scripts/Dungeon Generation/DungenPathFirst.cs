@@ -1,3 +1,15 @@
+///	TODO: (Priority)
+/// -	Seperate many structs and classes into sepperate files for a more organized working environment.
+/// -	Seperate many methods into classes. Also for a more organized working environment.
+/// -	Add overwrites for many existing methods to make my own life easier. Like spawning an enemy by type instead of by a list.
+/// 
+/// TODO: (Nice to Have)
+/// -	Fix possible wrong implementation of the coordinate system. Spawning objects through the coordinates system leaves much to be desired.
+/// -	Build a seperate tool with which you can easily change the dungeon generation settings instead of the current massive inspector it needs now.
+/// -	Implement a way to add Rules to the dungeon. For example a rule that there must always be a treassure room, but this room can only spawn at X with Y enemies that have Z Abilities, etc.
+/// -	Makes use of Scriptable Objects for the enemies, props and possibly all the tiles.
+///		This creates a very easy to edit workflow and allows lots of experimentation instead of having to mess around in the code or edit lots and lots of prefabs.
+
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -348,8 +360,6 @@ namespace DungeonGenerationPathFirst
 				}
 			}
 
-			Debug.Log( "Dir: " + dir );
-
 			// Decide which direction the room should be placed in.
 			Vector2Int coordinates = froom.Coordinates;
 			Vector2Int coordinatesDir = Vector2Int.zero;
@@ -420,8 +430,6 @@ namespace DungeonGenerationPathFirst
 			//int roomIndex = Rooms.IndexOf( froom ) - 1;
 			//dir = Rooms[roomIndex].transform.position - froom.transform.position;
 
-			Debug.Log( "Dir: " + dir );
-
 			Vector2Int coordinates = froom.Coordinates;
 			Vector2Int coordinatesDir = Vector2Int.zero;
 
@@ -464,6 +472,7 @@ namespace DungeonGenerationPathFirst
 			coordinates.x += coordinatesDir.x * pathwayLength;
 			coordinates.y += coordinatesDir.y * pathwayLength;
 			GenerateRoom( coordinates, new Vector2Int( 25, 25 ), new Vector2Int( 25, 25 ), "Room[BOSS ROOM]", RoomType.BOSS, true );
+			SpawnEnemy( coordinates, GetRoomByType( RoomType.BOSS ).transform );
 
 			pathwayIndex++;
 		}
@@ -933,10 +942,11 @@ namespace DungeonGenerationPathFirst
 	[System.Serializable]
 	public struct EnemyList
 	{
-		[SerializeField] private new string name;
+		[SerializeField] private string name;
 		[SerializeField] private List<GameObject> enemies;
 
 		public List<GameObject> Enemies { get => enemies; set => enemies = value; }
+		public string Name { get => name; set => name =  value ; }
 	}
 
 	[System.Serializable]
