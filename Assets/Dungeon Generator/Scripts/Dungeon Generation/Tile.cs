@@ -6,11 +6,13 @@ namespace DungeonGenerationPathFirst
 {
 	public enum TileType
 	{
+		NONE,           // Initial tile type.
 		GROUND,         // A normal ground tile. (surrounded by other tiles)
 		WALL,           // Wall Tile. (Missing Neighbour on one side)
 		OUTER_CORNER,   // Outer Corner Tile. (Missing Neighbour on atleast 2 sides)
 		INNER_CORNER,   // Inner Corner Tile.
-		DOOR            // Door Tile. (Missing Corner neighbours)
+		DOOR,           // Door Tile. (Missing Corner neighbours)
+		PATHWAY         // Pathway Tile.
 	}
 
 	public class Tile : MonoBehaviour
@@ -43,6 +45,14 @@ namespace DungeonGenerationPathFirst
 			this.graphicRotation = graphicRotation;
 			this.parentTransform = parentTransform;
 			this.populated = populated;
+		}
+
+		public void SetType( TileType type )
+		{
+			if( this.type == TileType.NONE )
+			{
+				this.type = type;
+			}
 		}
 	}
 }

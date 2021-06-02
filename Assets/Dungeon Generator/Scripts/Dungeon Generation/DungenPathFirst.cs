@@ -32,34 +32,37 @@ namespace DungeonGenerationPathFirst
 	public class DungenPathFirst : MonoBehaviour
 	{
 		//[BoxGroup( "Generation Settings" )] [serializeField] private DungeonGeneratorStatus status = DungeonGeneratorStatus.IDLE;
-		[Foldout( "Generation Settings" )] [SerializeField] private bool randomizeSeed = false;               // Determines if the seed should be randomized each time.
-		[Foldout( "Generation Settings" )] [SerializeField] private string seed = "";
-		[Foldout( "Generation Settings" )] [SerializeField] private Transform roomParentTransform = default;   // Parent of the rooms in the scene.
-		[Foldout( "Generation Settings" )] [SerializeField] private Vector2Int minRoomSize = Vector2Int.zero;  // Min Room size.
-		[Foldout( "Generation Settings" )] [SerializeField] private Vector2Int maxRoomSize = Vector2Int.zero;  // Max Room size.
-		[Foldout( "Generation Settings" )] [SerializeField] private Transform pathwayParentTransform = default;    // Parent of the pathways in the scene.
-		[Foldout( "Generation Settings" )] [SerializeField] private int minPathwayCount = 15;                  // Minimum amount of pathways that will be generated.
-		[Foldout( "Generation Settings" )] [SerializeField] private int maxPathwayCount = 30;                  // Maximum amount of pathways that will be generated.
-		[Foldout( "Generation Settings" )] [SerializeField] private int minPathwayLength = 10;                 // Minimum length of the pathway before making a turn.
-		[Foldout( "Generation Settings" )] [SerializeField] private int maxPathwayLength = 20;                 // Maximum length of the pathway before making a turn.
+		[BoxGroup( "Generation Settings" )] [SerializeField] private bool randomizeSeed = false;               // Determines if the seed should be randomized each time.
+		[BoxGroup( "Generation Settings" )] [SerializeField] private string seed = "";
+		[BoxGroup( "Generation Settings" )] [SerializeField] private Transform roomParentTransform = default;   // Parent of the rooms in the scene.
+		[BoxGroup( "Generation Settings" )] [SerializeField] private Vector2Int minRoomSize = Vector2Int.zero;  // Min Room size.
+		[BoxGroup( "Generation Settings" )] [SerializeField] private Vector2Int maxRoomSize = Vector2Int.zero;  // Max Room size.
+		[BoxGroup( "Generation Settings" )] [SerializeField] private Transform pathwayParentTransform = default;    // Parent of the pathways in the scene.
+		[BoxGroup( "Generation Settings" )] [SerializeField] private int minPathwayCount = 15;                  // Minimum amount of pathways that will be generated.
+		[BoxGroup( "Generation Settings" )] [SerializeField] private int maxPathwayCount = 30;                  // Maximum amount of pathways that will be generated.
+		[BoxGroup( "Generation Settings" )] [SerializeField] private int minPathwayLength = 10;                 // Minimum length of the pathway before making a turn.
+		[BoxGroup( "Generation Settings" )] [SerializeField] private int maxPathwayLength = 20;                 // Maximum length of the pathway before making a turn.
 
-		[Foldout( "Tile Objects" )] [SerializeField] private int tileSize = 1;                                 // Tile Size.
-		[Foldout( "Tile Objects" )] [SerializeField] private List<GameObject> tileGroundObjects = new List<GameObject>();              // Tile Ground Objects.
-		[Foldout( "Tile Objects" )] [SerializeField] private List<GameObject> tileWallObjects = new List<GameObject>();                // Tile Wall Left Objects.
-		[Foldout( "Tile Objects" )] [SerializeField] private List<GameObject> tileOuterCornerObjects = new List<GameObject>();         // Tile Outer Corner Left Sprite
-		[Foldout( "Tile Objects" )] [SerializeField] private List<GameObject> tileInnerCornerObjects = new List<GameObject>();         // Tile Inner Corner Left Sprite
+		[BoxGroup( "Tile Objects" )] [SerializeField] private int tileSize = 1;                                 // Tile Size.
+		[BoxGroup( "Tile Objects" )] [SerializeField] private List<GameObject> tileGroundObjects = new List<GameObject>();              // Tile Ground Objects.
+		[BoxGroup( "Tile Objects" )] [SerializeField] private List<GameObject> tileWallObjects = new List<GameObject>();                // Tile Wall Left Objects.
+		[BoxGroup( "Tile Objects" )] [SerializeField] private List<GameObject> tileOuterCornerObjects = new List<GameObject>();         // Tile Outer Corner Left Sprite
+		[BoxGroup( "Tile Objects" )] [SerializeField] private List<GameObject> tileInnerCornerObjects = new List<GameObject>();         // Tile Inner Corner Left Sprite
 
-		[Foldout( "Enemy Settings" )] [SerializeField] private Transform enemyParentTransform = default;               // The parent transform of the enemies.
-		[Foldout( "Enemy Settings" )] [SerializeField] private List<EnemyList> enemyLists = new List<EnemyList>();     // List with Enemy Lists. Within these lists are the enemies that can be spawned per theme.
-		[Foldout( "Enemy Settings" )] [SerializeField] private int spawnChance = 1;                                    // How much percentage chance there is to spawn an enemy.
+		[BoxGroup( "Enemy Settings" )] [SerializeField] private Transform enemyParentTransform = default;               // The parent transform of the enemies.
+		[BoxGroup( "Enemy Settings" )] [SerializeField] private List<EnemyList> enemyLists = new List<EnemyList>();     // List with Enemy Lists. Within these lists are the enemies that can be spawned per theme.
+		[BoxGroup( "Enemy Settings" )] [SerializeField] private int spawnChance = 1;                                    // How much percentage chance there is to spawn an enemy.
 
-		[Foldout( "Dungeon Details" )] [SerializeField] private int propsAmount;                                    // How many props will be spawned within the dungeon.
-		[Foldout( "Dungeon Details" )] [SerializeField] private List<Prop> spawnableProps = new List<Prop>();       // List with all the spawnable props within the dungeon.
+		[BoxGroup( "Dungeon Details" )] [SerializeField] private int propsAmount;                                    // How many props will be spawned within the dungeon.
+		[BoxGroup( "Dungeon Details" )] [SerializeField] private List<Prop> spawnableProps = new List<Prop>();       // List with all the spawnable props within the dungeon.
+		[BoxGroup( "Dungeon Details" )] [SerializeField] private int trapAmount;                                    // How many traps will be spawned within the dungeon.
+		[BoxGroup( "Dungeon Details" )] [SerializeField] private List<Trap> spawnableTraps = new List<Trap>();      // List with all the spawnable traps within the dungeon.
 
 		[Foldout( "Generated Assets" )] [SerializeField] private List<Room> rooms = new List<Room>();       // List with all the rooms in the dungeon.
 		[Foldout( "Generated Assets" )] [SerializeField] private List<Tile> tiles = new List<Tile>();       // List with all the tiles in the dungeon.
-		[Foldout( "Generated Assets" )] [SerializeField] private List<GameObject> props = new List<GameObject>();       // List with all the props in the dungeon.
 		[Foldout( "Generated Assets" )] [SerializeField] private List<GameObject> enemies = new List<GameObject>();       // List with all the enemies in the dungeon.
+		[Foldout( "Generated Assets" )] [SerializeField] private List<GameObject> props = new List<GameObject>();       // List with all the props in the dungeon.
+		[Foldout( "Generated Assets" )] [SerializeField] private List<GameObject> traps = new List<GameObject>();       // List with all the traps in the dungeon.
 
 		[Foldout( "Debugging" )] [SerializeField] private bool renderDungeonAsGizmos = false;      // Render the entire dungeon using gizmos.
 		[Foldout( "Debugging" )] [SerializeField] private TextMeshProUGUI dungeonSeedText;
@@ -98,8 +101,9 @@ namespace DungeonGenerationPathFirst
 			SetTilesType();
 			InstantiateTilesGraphic();
 
-			SpawnProps();
 			SpawnEnemiesWithinRooms();
+			SpawnProps();
+			SpawnTraps();
 
 			//status = DungeonGeneratorStatus.DONE;
 			Debug.Log( "Dungeon Generation Took: " + ( DateTime.Now - startTime ).Milliseconds + "ms" );
@@ -141,6 +145,10 @@ namespace DungeonGenerationPathFirst
 			{
 				DestroyImmediate( enemy );
 			}
+			foreach( GameObject trap in traps )
+			{
+				DestroyImmediate( trap );
+			}
 
 
 			roomIndex = 0;
@@ -148,8 +156,9 @@ namespace DungeonGenerationPathFirst
 
 			rooms.Clear();
 			tiles.Clear();
-			props.Clear();
 			enemies.Clear();
+			props.Clear();
+			traps.Clear();
 
 			roomChildren.Clear();
 			pathwayChildren.Clear();
@@ -254,9 +263,9 @@ namespace DungeonGenerationPathFirst
 				// Make the path 3 wide. We dont have to worry about duplicate tiles because those won't get generated anyway.
 				for( int j = 0; j < pathwayLength; j++ )
 				{
-					CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ), coordinates.y + ( coordinatesDir.y * j ) ), pathwayGO.transform, false );
-					CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ) - 1, coordinates.y + ( coordinatesDir.y * j ) - 1 ), pathwayGO.transform, false );
-					CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ) + 1, coordinates.y + ( coordinatesDir.y * j ) + 1 ), pathwayGO.transform, false );
+					CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ), coordinates.y + ( coordinatesDir.y * j ) ), pathwayGO.transform, false, TileType.PATHWAY );
+					CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ) - 1, coordinates.y + ( coordinatesDir.y * j ) - 1 ), pathwayGO.transform, false, TileType.PATHWAY );
+					CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ) + 1, coordinates.y + ( coordinatesDir.y * j ) + 1 ), pathwayGO.transform, false, TileType.PATHWAY );
 				}
 
 				// Create a room at the end of each pathway.
@@ -394,9 +403,9 @@ namespace DungeonGenerationPathFirst
 			// Make the path 3 wide. We dont have to worry about duplicate tiles because those won't get generated anyway.
 			for( int j = 0; j < pathwayLength; j++ )
 			{
-				CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ), coordinates.y + ( coordinatesDir.y * j ) ), pathwayGO.transform, false );
-				CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ) - 1, coordinates.y + ( coordinatesDir.y * j ) - 1 ), pathwayGO.transform, false );
-				CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ) + 1, coordinates.y + ( coordinatesDir.y * j ) + 1 ), pathwayGO.transform, false );
+				CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ), coordinates.y + ( coordinatesDir.y * j ) ), pathwayGO.transform, false, TileType.PATHWAY );
+				CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ) - 1, coordinates.y + ( coordinatesDir.y * j ) - 1 ), pathwayGO.transform, false, TileType.PATHWAY );
+				CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ) + 1, coordinates.y + ( coordinatesDir.y * j ) + 1 ), pathwayGO.transform, false, TileType.PATHWAY );
 			}
 
 			// Create a room at the end of each pathway.
@@ -463,9 +472,9 @@ namespace DungeonGenerationPathFirst
 			// Make the path 3 wide. We dont have to worry about duplicate tiles because those won't get generated anyway.
 			for( int j = 0; j < pathwayLength; j++ )
 			{
-				CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ), coordinates.y + ( coordinatesDir.y * j ) ), pathwayGO.transform, false );
-				CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ) - 1, coordinates.y + ( coordinatesDir.y * j ) - 1 ), pathwayGO.transform, false );
-				CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ) + 1, coordinates.y + ( coordinatesDir.y * j ) + 1 ), pathwayGO.transform, false );
+				CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ), coordinates.y + ( coordinatesDir.y * j ) ), pathwayGO.transform, false, TileType.PATHWAY );
+				CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ) - 1, coordinates.y + ( coordinatesDir.y * j ) - 1 ), pathwayGO.transform, false, TileType.PATHWAY );
+				CreateTile( "Pathway [" + pathwayIndex + "]", new Vector2Int( coordinates.x + ( coordinatesDir.x * j ) + 1, coordinates.y + ( coordinatesDir.y * j ) + 1 ), pathwayGO.transform, false, TileType.PATHWAY );
 			}
 
 			// Create a room at the end of each pathway.
@@ -482,7 +491,7 @@ namespace DungeonGenerationPathFirst
 		/// </summary>
 		/// <param name="tileName"> The name of the tile. </param>
 		/// <param name="coordinates"> The coordinates of the tile. </param>
-		private void CreateTile( string tileName, Vector2Int coordinates, Transform parentTransform = null, bool overwrite = true )
+		private void CreateTile( string tileName, Vector2Int coordinates, Transform parentTransform = null, bool overwrite = true, TileType type = TileType.NONE )
 		{
 			// This removes a possible duplicate tile with the same coordinates.
 			// We could check for duplicate tile and return the function, but this makes the hierarchy cleaner.
@@ -507,7 +516,7 @@ namespace DungeonGenerationPathFirst
 			Tile tile = tileGO.AddComponent<Tile>();
 
 			tile.Name = tileName;
-			tile.Type = TileType.GROUND;
+			tile.Type = type;
 			tile.Size = tileSize;
 			tile.Coordinates = new Vector2Int( coordinates.x, coordinates.y ) * tileSize;
 			tile.Graphic = tileGroundObjects[Random.Range( 0, tileGroundObjects.Count )];
@@ -617,7 +626,7 @@ namespace DungeonGenerationPathFirst
 
 				if( neighbourTiles.Count == 8 )
 				{
-					tile.Type = TileType.GROUND;
+					tile.SetType( TileType.GROUND );
 					tile.Graphic = tileGroundObjects[Random.Range( 0, tileGroundObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( -90, 0, 0 );
 				}
@@ -629,7 +638,7 @@ namespace DungeonGenerationPathFirst
 				// Check if this tile is all the way in the left of a room. a.k.a. no Left neighbour.
 				if( leftTile == null && rightTile != null && topTile != null && bottomTile != null )
 				{
-					tile.Type = TileType.WALL;
+					tile.SetType( TileType.WALL );
 					tile.Graphic = tileWallObjects[Random.Range( 0, tileWallObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( -90, 0, 0 );
 				}
@@ -637,7 +646,7 @@ namespace DungeonGenerationPathFirst
 				// Check if this tile is all the way in the Right of a room. a.k.a. no Right neighbour.
 				if( leftTile != null && rightTile == null && topTile != null && bottomTile != null )
 				{
-					tile.Type = TileType.WALL;
+					tile.SetType( TileType.WALL );
 					tile.Graphic = tileWallObjects[Random.Range( 0, tileWallObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( -90, 180, 0 );
 				}
@@ -645,7 +654,7 @@ namespace DungeonGenerationPathFirst
 				// Check if this tile is all the way in the Top of a room. a.k.a. no top neighbour.
 				if( leftTile != null && rightTile != null && topTile == null && bottomTile != null )
 				{
-					tile.Type = TileType.WALL;
+					tile.SetType( TileType.WALL );
 					tile.Graphic = tileWallObjects[Random.Range( 0, tileWallObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( -90, 90, 0 );
 				}
@@ -653,7 +662,7 @@ namespace DungeonGenerationPathFirst
 				// Check if this tile is all the way in the Bottom of a room. a.k.a. no bottom neighbour.
 				if( leftTile != null && rightTile != null && topTile != null && bottomTile == null )
 				{
-					tile.Type = TileType.WALL;
+					tile.SetType( TileType.WALL );
 					tile.Graphic = tileWallObjects[Random.Range( 0, tileWallObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( -90, 270, 0 );
 				}
@@ -665,7 +674,7 @@ namespace DungeonGenerationPathFirst
 				// Top Left Outer Corner.
 				if( leftTile == null && topLeftTile == null && topTile == null )
 				{
-					tile.Type = TileType.OUTER_CORNER;
+					tile.SetType( TileType.OUTER_CORNER );
 					tile.Graphic = tileOuterCornerObjects[Random.Range( 0, tileOuterCornerObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( -90, 90, 0 );
 				}
@@ -673,7 +682,7 @@ namespace DungeonGenerationPathFirst
 				// Top Right Outer Corner.
 				if( rightTile == null && topRightTile == null && topTile == null )
 				{
-					tile.Type = TileType.OUTER_CORNER;
+					tile.SetType( TileType.OUTER_CORNER );
 					tile.Graphic = tileOuterCornerObjects[Random.Range( 0, tileOuterCornerObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( -90, 180, 0 );
 				}
@@ -681,7 +690,7 @@ namespace DungeonGenerationPathFirst
 				// Bottom Left Outer Corner.
 				if( leftTile == null && bottomLeftTile == null && bottomTile == null )
 				{
-					tile.Type = TileType.OUTER_CORNER;
+					tile.SetType( TileType.OUTER_CORNER );
 					tile.Graphic = tileOuterCornerObjects[Random.Range( 0, tileOuterCornerObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( -90, 0, 0 );
 				}
@@ -689,7 +698,7 @@ namespace DungeonGenerationPathFirst
 				// Bottom Right Outer Corner.
 				if( rightTile == null && bottomRightTile == null && bottomTile == null )
 				{
-					tile.Type = TileType.OUTER_CORNER;
+					tile.SetType( TileType.OUTER_CORNER );
 					tile.Graphic = tileOuterCornerObjects[Random.Range( 0, tileOuterCornerObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( -90, -90, 0 );
 				}
@@ -701,28 +710,28 @@ namespace DungeonGenerationPathFirst
 				// Top Left Inner Corner
 				if( leftTile != null && topLeftTile == null && rightTile != null && topRightTile != null && bottomLeftTile != null && bottomRightTile != null && topTile != null && bottomTile != null )
 				{
-					tile.Type = TileType.INNER_CORNER;
+					tile.SetType( TileType.INNER_CORNER );
 					tile.Graphic = tileInnerCornerObjects[Random.Range( 0, tileInnerCornerObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( -90, -90, 0 );
 				}
 				// Top Right Inner Corner
 				if( leftTile != null && topLeftTile != null && rightTile != null && topRightTile == null && bottomLeftTile != null && bottomRightTile != null && topTile != null && bottomTile != null )
 				{
-					tile.Type = TileType.INNER_CORNER;
+					tile.SetType( TileType.INNER_CORNER );
 					tile.Graphic = tileInnerCornerObjects[Random.Range( 0, tileInnerCornerObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( -90, 0, 0 );
 				}
 				// Bottom Left Inner Corner
 				if( leftTile != null && topLeftTile != null && rightTile != null && topRightTile != null && bottomLeftTile == null && bottomRightTile != null && topTile != null && bottomTile != null )
 				{
-					tile.Type = TileType.INNER_CORNER;
+					tile.SetType( TileType.INNER_CORNER );
 					tile.Graphic = tileInnerCornerObjects[Random.Range( 0, tileInnerCornerObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( -90, -180, 0 );
 				}
 				// Bottom Right Inner Corner
 				if( leftTile != null && topLeftTile != null && rightTile != null && topRightTile != null && bottomLeftTile != null && bottomRightTile == null && topTile != null && bottomTile != null )
 				{
-					tile.Type = TileType.INNER_CORNER;
+					tile.SetType( TileType.INNER_CORNER );
 					tile.Graphic = tileInnerCornerObjects[Random.Range( 0, tileInnerCornerObjects.Count )];
 					tile.GraphicRotation = Quaternion.Euler( -90, 90, 0 );
 				}
@@ -767,10 +776,10 @@ namespace DungeonGenerationPathFirst
 			}
 		}
 		/// <summary>
-		/// Spawns an enemy at the given coordinates
+		/// Spawns an enemy at the given Tile Coordinbates
 		/// </summary>
-		/// <param name="coordinates"> Which coordinate to spawn the enemy on. </param>
-		private void SpawnEnemy( Vector2 coordinates, Transform parent = null )
+		/// <param name="tile"> Which tile to spawn the enemy on. </param>
+		private void SpawnEnemy( Vector2Int coordinates, Transform parent = null )
 		{
 			int randomEnemyListChance = Random.Range( 0, 100 );
 			int enemyListIndex = 0;
@@ -820,17 +829,54 @@ namespace DungeonGenerationPathFirst
 							int tileIndex = Random.Range( 0, room.Tiles.Count - 1 );
 							Tile spawnTile = room.Tiles[tileIndex];
 
-							while( spawnTile.Type != TileType.GROUND )
+							while( spawnTile.Type != TileType.GROUND && spawnTile.Populated == true )
 							{
 								tileIndex = Random.Range( 0, room.Tiles.Count - 1 );
 								spawnTile = room.Tiles[tileIndex];
-								spawnTile.Populated = true;
 							}
 
 							GameObject newPropGO = Instantiate( spawnableProps[propIndex].PrefabObject, spawnTile.transform.position, Quaternion.identity, spawnTile.transform );
 							newPropGO.transform.position += spawnableProps[propIndex].PositionOffset;
 							newPropGO.transform.rotation = Quaternion.Euler( spawnableProps[propIndex].RotationOffset );
+
+							spawnTile.Populated = true;
 						}
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Spawns traps upon the Pathway tiles within the dungeon.
+		/// The pathway tile should offer a different type of challenge, these can damage everything with the IDamageable interface.
+		/// The player could use these to their advantage.
+		/// </summary>
+		private void SpawnTraps()
+		{
+			foreach( Tile tile in tiles )
+			{
+				if( tile.Type == TileType.PATHWAY && !tile.Populated )
+				{
+
+					int trapSpawnChance = Random.Range( 0, 100 );
+					int randTrap = Random.Range( 0, spawnableTraps.Count );
+
+					if( trapSpawnChance <= spawnableTraps[randTrap].SpawnChance )
+					{
+						Trap trapToSpawn = spawnableTraps[randTrap];
+
+						GameObject trapGO = Instantiate( trapToSpawn.PrefabObject, tile.transform.position, Quaternion.identity, tile.transform );
+						trapGO.transform.localScale = trapToSpawn.Scale;
+						trapGO.AddComponent<Trap>();
+
+						trapGO.GetComponent<Trap>().Name = trapToSpawn.Name;
+						trapGO.GetComponent<Trap>().PrefabObject = trapToSpawn.PrefabObject;
+						trapGO.GetComponent<Trap>().SpawnChance = trapToSpawn.SpawnChance;
+						trapGO.GetComponent<Trap>().Scale = trapToSpawn.Scale;
+
+						tile.Populated = true;
+
+						traps.Add( trapGO );
 					}
 				}
 			}
@@ -861,6 +907,7 @@ namespace DungeonGenerationPathFirst
 					if( tile.Type == TileType.INNER_CORNER ) Gizmos.color = Color.blue;
 					else if( tile.Type == TileType.OUTER_CORNER ) Gizmos.color = Color.cyan;
 					else if( tile.Type == TileType.WALL ) Gizmos.color = Color.red;
+					else if( tile.Type == TileType.PATHWAY ) Gizmos.color = Color.green;
 
 					Gizmos.DrawCube( new Vector3Int( tile.Coordinates.x, tileSize, tile.Coordinates.y ), new Vector3Int( tile.Size, tile.Size, tile.Size ) );
 				}

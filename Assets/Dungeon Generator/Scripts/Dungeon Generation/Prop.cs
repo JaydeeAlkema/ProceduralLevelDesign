@@ -10,8 +10,8 @@ namespace DungeonGenerationPathFirst
 		[SerializeField] private GameObject prefabObject;
 		[SerializeField] private float spawnChance;
 		[Space]
-		[SerializeField] private Vector3 rotationOffset;
 		[SerializeField] private Vector3 positionOffset;
+		[SerializeField] private Vector3 rotationOffset;
 
 		public string Name { get => name; set => name = value; }
 		public GameObject PrefabObject { get => prefabObject; set => prefabObject = value; }
