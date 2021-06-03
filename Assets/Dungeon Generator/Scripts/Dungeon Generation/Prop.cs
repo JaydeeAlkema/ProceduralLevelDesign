@@ -9,6 +9,7 @@ namespace DungeonGenerationPathFirst
 		[SerializeField] private new string name;
 		[SerializeField] private GameObject prefabObject;
 		[SerializeField] private float spawnChance;
+		[SerializeField] private LootTableScriptableObject lootTable;
 		[Space]
 		[SerializeField] private Vector3 positionOffset;
 		[SerializeField] private Vector3 rotationOffset;
@@ -18,5 +19,10 @@ namespace DungeonGenerationPathFirst
 		public float SpawnChance { get => spawnChance; set => spawnChance = value; }
 		public Vector3 RotationOffset { get => rotationOffset; set => rotationOffset = value; }
 		public Vector3 PositionOffset { get => positionOffset; set => positionOffset = value; }
+
+		public void Destroy()
+		{
+			lootTable.GetRandomLoot();
+		}
 	}
 }
