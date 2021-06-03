@@ -45,6 +45,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Crate
   prefabObject: {fileID: 5129442236857904303, guid: e37d55d9adae8724c9dcf1dff5b67578, type: 3}
-  spawnChance: 25
-  rotationOffset: {x: 0, y: 0, z: 0}
+  spawnChance: 50
   positionOffset: {x: 0, y: 0.5, z: 0}
+  rotationOffset: {x: 0, y: 0, z: 0}

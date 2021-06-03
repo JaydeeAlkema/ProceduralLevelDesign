@@ -44,6 +44,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: Floor Spikes
-  prefabObject: {fileID: 100002, guid: a07105af0bc77a942ac71b139b8f4c4b, type: 3}
+  prefabObject: {fileID: 115016, guid: afd19ab1d4bb70b499bb2f62171a522d, type: 3}
   spawnChance: 35
   scale: {x: 3, y: 3, z: 3}

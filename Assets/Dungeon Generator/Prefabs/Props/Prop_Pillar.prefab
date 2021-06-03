@@ -45,6 +45,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Pillar
   prefabObject: {fileID: 3713104444964819695, guid: 2f3f7d4927009b84583c02fcbc509217, type: 3}
-  spawnChance: 25
-  rotationOffset: {x: 0, y: 0, z: 0}
+  spawnChance: 50
   positionOffset: {x: 0, y: 0, z: 0}
+  rotationOffset: {x: 0, y: 0, z: 0}

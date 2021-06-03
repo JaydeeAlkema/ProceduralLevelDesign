@@ -45,6 +45,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Wall
   prefabObject: {fileID: 7779381877309823848, guid: 2f6c4572e07a60b43b00e1c4f489a806, type: 3}
-  spawnChance: 10
+  spawnChance: 25
   positionOffset: {x: 0, y: 0, z: 0}
   rotationOffset: {x: 0, y: 0, z: 0}
