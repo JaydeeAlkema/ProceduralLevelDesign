@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 825fa36205432da4c952572aa0dae9cf, type: 3}
   m_Name: Dungen Settings
   m_EditorClassIdentifier: 
-  randomizeSeed: 0
+  randomizeSeed: 1
   seed: 747941618
   minRoomSize: {x: 9, y: 9}
   maxRoomSize: {x: 15, y: 15}

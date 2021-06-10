@@ -150,6 +150,8 @@ namespace DungeonGenerationPathFirst
 		/// </summary>
 		public void GenerateDungeon()
 		{
+			startTime = DateTime.Now;
+
 			GetSettings();
 			SetupParentTransforms();
 
@@ -157,8 +159,6 @@ namespace DungeonGenerationPathFirst
 			if( randomizeSeed ) seed = Random.Range( 0, int.MaxValue ).ToString();
 			Random.InitState( seed.GetHashCode() );
 			dungeonSeedText.text = "Seed: " + seed;
-
-			startTime = DateTime.Now;
 
 			ClearDungeon();
 
